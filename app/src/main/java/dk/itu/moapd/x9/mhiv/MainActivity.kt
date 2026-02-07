@@ -1,20 +1,31 @@
 package dk.itu.moapd.x9.mhiv
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import dk.itu.moapd.x9.mhiv.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setupUI()
+    }
+
+    private fun setupUI() {
+        with(binding) {
+            ArrayAdapter.createFromResource(
+                this@MainActivity,
+                R.array.form_report_types,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                formReportTypeSpinner.adapter = adapter
+            }
         }
     }
 }

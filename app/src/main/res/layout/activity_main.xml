@@ -29,45 +29,45 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/form_report_title_til"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/form_report_title"
             android:layout_marginBottom="@dimen/form_report_margin_bottom">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_report_title_tiet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <Spinner
+            android:id="@+id/form_report_type_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/form_report_type"
-            android:layout_marginBottom="@dimen/form_report_margin_bottom">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/form_report_description_til"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/form_report_description"
             android:layout_marginBottom="@dimen/form_report_margin_bottom">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_report_description_tiet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/form_report_priority_til"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/form_report_prority"
             android:layout_marginBottom="@dimen/form_report_margin_bottom">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_report_priority_tiet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
