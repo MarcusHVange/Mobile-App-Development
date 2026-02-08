@@ -18,5 +18,10 @@
         <item>heavy traffic</item>
         <item>accident</item>
     </string-array>
+    <string-array name="form_report_priority_values">
+        <item>minor</item>
+        <item>moderate</item>
+        <item>major</item>
+    </string-array>
     <string name="submit_btn_text">Submit</string>
 </resources>

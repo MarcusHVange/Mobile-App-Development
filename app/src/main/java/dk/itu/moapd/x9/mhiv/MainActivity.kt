@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 formReportPriority.error = getString(R.string.form_report_priority_error_required)
                 valid = false
             } else {
-                val allowed = setOf("minor", "moderate", "major")
+                val allowed = resources.getStringArray(R.array.form_report_priority_values).toSet()
                 if (priority.lowercase() !in allowed) {
                     formReportPriority.error = getString(R.string.form_report_priority_error_invalid)
                     valid = false
