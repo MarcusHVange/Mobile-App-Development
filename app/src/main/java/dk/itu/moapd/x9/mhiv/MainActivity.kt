@@ -61,27 +61,27 @@ class MainActivity : AppCompatActivity() {
             var valid = true
 
             if (title.isEmpty()) {
-                formReportTitle.error = "Title is required"
+                formReportTitle.error = getString(R.string.form_report_title_error_required)
                 valid = false
             }
 
             if (typePos == 0) {
-                formReportTypeLabel.error = "Please select a report type"
+                formReportTypeLabel.error = getString(R.string.form_report_type_error_required)
                 valid = false
             }
 
             if (description.isEmpty()) {
-                formReportDescription.error = "Description is required"
+                formReportDescription.error = getString(R.string.form_report_description_error_required)
                 valid = false
             }
 
             if (priority.isEmpty()) {
-                formReportPriority.error = "Priority is required"
+                formReportPriority.error = getString(R.string.form_report_priority_error_required)
                 valid = false
             } else {
                 val allowed = setOf("minor", "moderate", "major")
                 if (priority.lowercase() !in allowed) {
-                    formReportPriority.error = "Use: Minor, Moderate, or Major"
+                    formReportPriority.error = getString(R.string.form_report_priority_error_invalid)
                     valid = false
                 }
             }
@@ -99,3 +99,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
