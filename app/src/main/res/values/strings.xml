@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">X9</string>
     <string name="form_report_title">Report title</string>
+    <string name="form_report_title_hint">Big highway accident</string>
     <string name="form_report_type">Report type</string>
     <string name="form_report_description">Report description</string>
+    <string name="form_report_description_hint">Two cars have collided on the highway</string>
     <string name="form_report_priority">Report priority</string>
+    <string name="form_report_priority_hint">Major</string>
     <string-array name="form_report_types">
+        <item>Select report type</item>
         <item>speed camera</item>
         <item>heavy traffic</item>
         <item>accident</item>

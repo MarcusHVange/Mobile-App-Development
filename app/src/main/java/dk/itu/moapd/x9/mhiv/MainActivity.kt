@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
 
             // Set form submit listener
             submitBtn.setOnClickListener {
+                if (!isFormValid()) return@setOnClickListener
+
                 val reportTitle = formReportTitle.text.toString().trim()
                 val reportType = formReportTypeSpinner.selectedItem.toString().trim()
                 val reportDescription = formReportDescription.text.toString().trim()
@@ -40,6 +42,60 @@ class MainActivity : AppCompatActivity() {
                     "Report Title: $reportTitle\n Report Type: $reportType\n Report Description: $reportDescription\n Report Priority: $reportPriority"
                 Log.i("Report Info", formData)
             }
+        }
+    }
+
+    private fun isFormValid(): Boolean {
+        with(binding) {
+            // Clear old errors
+            formReportTitle.error = null
+            formReportDescription.error = null
+            formReportPriority.error = null
+            formReportTypeLabel.error = null
+
+            val title = formReportTitle.text.toString().trim()
+            val typePos = formReportTypeSpinner.selectedItemPosition
+            val description = formReportDescription.text.toString().trim()
+            val priority = formReportPriority.text.toString().trim()
+
+            var valid = true
+
+            if (title.isEmpty()) {
+                formReportTitle.error = "Title is required"
+                valid = false
+            }
+
+            if (typePos == 0) {
+                formReportTypeLabel.error = "Please select a report type"
+                valid = false
+            }
+
+            if (description.isEmpty()) {
+                formReportDescription.error = "Description is required"
+                valid = false
+            }
+
+            if (priority.isEmpty()) {
+                formReportPriority.error = "Priority is required"
+                valid = false
+            } else {
+                val allowed = setOf("minor", "moderate", "major")
+                if (priority.lowercase() !in allowed) {
+                    formReportPriority.error = "Use: Minor, Moderate, or Major"
+                    valid = false
+                }
+            }
+
+            if (!valid) {
+                when {
+                    formReportTitle.error != null -> formReportTitle.requestFocus()
+                    formReportTypeLabel.error != null -> formReportTypeSpinner.requestFocus()
+                    formReportDescription.error != null -> formReportDescription.requestFocus()
+                    formReportPriority.error != null -> formReportPriority.requestFocus()
+                }
+            }
+
+            return valid
         }
     }
 }
