@@ -3,10 +3,11 @@
     <string name="form_report_title">Report title</string>
     <string name="form_report_type">Report type</string>
     <string name="form_report_description">Report description</string>
-    <string name="form_report_prority">Report priority</string>
+    <string name="form_report_priority">Report priority</string>
     <string-array name="form_report_types">
         <item>speed camera</item>
         <item>heavy traffic</item>
         <item>accident</item>
     </string-array>
+    <string name="submit_btn_text">Submit</string>
 </resources>
