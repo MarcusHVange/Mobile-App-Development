@@ -1,4 +1,4 @@
-package dk.itu.moapd.x9.mhiv
+package dk.itu.moapd.x9.mhiv.ui.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -32,4 +32,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
