@@ -1,7 +1,7 @@
 package dk.itu.moapd.x9.mhiv
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import dk.itu.moapd.x9.mhiv.databinding.ActivityTrafficReportBinding
@@ -40,7 +40,12 @@ class TrafficReportActivity : AppCompatActivity() {
 
                 val formData =
                     "Report Title: $reportTitle\n Report Type: $reportType\n Report Description: $reportDescription\n Report Priority: $reportPriority"
-                Log.i("Report Info", formData)
+
+                val intent = Intent(this@TrafficReportActivity, MainActivity::class.java).apply {
+                    putExtra("reportData", formData)
+                }
+
+                startActivity(intent)
             }
         }
     }

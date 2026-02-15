@@ -2,6 +2,7 @@ package dk.itu.moapd.x9.mhiv
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import dk.itu.moapd.x9.mhiv.databinding.ActivityMainBinding
 
@@ -12,6 +13,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val reportData = intent.getStringExtra("reportData")
+
+        if(reportData != null) {
+            Log.i("Report info", reportData)
+        }
 
         setupUI()
     }
