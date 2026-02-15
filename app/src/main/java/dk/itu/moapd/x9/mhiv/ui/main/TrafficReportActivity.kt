@@ -8,6 +8,17 @@ import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.databinding.ActivityTrafficReportBinding
 
 class TrafficReportActivity : AppCompatActivity() {
+    companion object {
+        private const val KEY_REPORT_TITLE = "key_report_title"
+        private const val KEY_REPORT_TYPE = "key_report_type"
+        private const val KEY_REPORT_DESCRIPTION = "key_report_description"
+        private const val KEY_REPORT_PRIORITY = "key_report_priority"
+        private const val KEY_TITLE_ERROR = "key_title_error"
+        private const val KEY_TYPE_ERROR = "key_type_error"
+        private const val KEY_DESCRIPTION_ERROR = "key_description_error"
+        private const val KEY_PRIORITY_ERROR = "key_priority_error"
+    }
+
     private lateinit var binding: ActivityTrafficReportBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +27,7 @@ class TrafficReportActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupUI()
+        restoreState(savedInstanceState)
     }
 
     private fun setupUI() {
@@ -99,6 +111,36 @@ class TrafficReportActivity : AppCompatActivity() {
             }
 
             return valid
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        with(binding) {
+            outState.putString(KEY_REPORT_TITLE, formReportTitle.text?.toString())
+            outState.putString(KEY_REPORT_TYPE, formReportTypeDropdown.text?.toString())
+            outState.putString(KEY_REPORT_DESCRIPTION, formReportDescription.text?.toString())
+            outState.putString(KEY_REPORT_PRIORITY, formReportPriority.text?.toString())
+
+            outState.putString(KEY_TITLE_ERROR, formReportTitleLayout.error?.toString())
+            outState.putString(KEY_TYPE_ERROR, formReportTypeLayout.error?.toString())
+            outState.putString(KEY_DESCRIPTION_ERROR, formReportDescriptionLayout.error?.toString())
+            outState.putString(KEY_PRIORITY_ERROR, formReportPriorityLayout.error?.toString())
+        }
+    }
+
+    private fun restoreState(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) return
+        with(binding) {
+            formReportTitle.setText(savedInstanceState.getString(KEY_REPORT_TITLE, ""))
+            formReportTypeDropdown.setText(savedInstanceState.getString(KEY_REPORT_TYPE, ""), false)
+            formReportDescription.setText(savedInstanceState.getString(KEY_REPORT_DESCRIPTION, ""))
+            formReportPriority.setText(savedInstanceState.getString(KEY_REPORT_PRIORITY, ""))
+
+            formReportTitleLayout.error = savedInstanceState.getString(KEY_TITLE_ERROR)
+            formReportTypeLayout.error = savedInstanceState.getString(KEY_TYPE_ERROR)
+            formReportDescriptionLayout.error = savedInstanceState.getString(KEY_DESCRIPTION_ERROR)
+            formReportPriorityLayout.error = savedInstanceState.getString(KEY_PRIORITY_ERROR)
         }
     }
 }
