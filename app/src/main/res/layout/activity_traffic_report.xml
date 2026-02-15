@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TrafficReportActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/primary">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:gravity="center_horizontal"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="14dp"
+            android:textColor="@color/secondary"
+            />
+
+        <TextView
+            android:id="@+id/form_report_title_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/form_report_title"
+            android:textColor="@color/secondary"
+            android:layout_marginBottom="@dimen/form_report_label_margin_bottom" />
+
+        <EditText
+            android:id="@+id/form_report_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/form_report_title_hint"
+            android:inputType="text"
+            android:layout_marginBottom="@dimen/form_report_margin_bottom" />
+
+        <TextView
+            android:id="@+id/form_report_type_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/form_report_type"
+            android:textColor="@color/secondary"
+            android:layout_marginBottom="@dimen/form_report_label_margin_bottom" />
+
+        <Spinner
+            android:id="@+id/form_report_type_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/form_report_margin_bottom" />
+
+        <TextView
+            android:id="@+id/form_report_description_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/form_report_description"
+            android:textColor="@color/secondary"
+            android:layout_marginBottom="@dimen/form_report_label_margin_bottom" />
+
+        <EditText
+            android:id="@+id/form_report_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/form_report_description_hint"
+            android:inputType="text"
+            android:layout_marginBottom="@dimen/form_report_margin_bottom" />
+
+        <TextView
+            android:id="@+id/form_report_priority_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/form_report_priority"
+            android:textColor="@color/secondary"
+            android:layout_marginBottom="@dimen/form_report_label_margin_bottom" />
+
+        <EditText
+            android:id="@+id/form_report_priority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/form_report_priority_hint"
+            android:inputType="text"
+            android:layout_marginBottom="@dimen/form_report_margin_bottom" />
+
+        <Button
+            android:id="@+id/submit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/submit_btn_text"
+            android:backgroundTint="@color/tertiary"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
