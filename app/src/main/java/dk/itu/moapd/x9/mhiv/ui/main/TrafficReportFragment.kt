@@ -90,6 +90,11 @@ class TrafficReportFragment : Fragment() {
             )
             formReportTypeDropdown.setAdapter(reportTypeAdapter)
 
+            // Set back button listener
+            backButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
+
             // Set form submit listener
             submitBtn.setOnClickListener {
                 if (!isFormValid()) return@setOnClickListener
