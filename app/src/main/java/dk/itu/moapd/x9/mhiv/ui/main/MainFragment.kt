@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.databinding.FragmentMainBinding
@@ -50,6 +51,7 @@ class MainFragment : Fragment() {
             val reportData = bundle.getString("reportData")
             if(reportData != null) {
                 Log.i("Report info", reportData)
+                Toast.makeText(requireContext(), "Report created", Toast.LENGTH_SHORT).show()
             }
         }
 
