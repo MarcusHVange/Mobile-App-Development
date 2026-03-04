@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_main">
+
+    <fragment
+        android:id="@+id/fragment_main"
+        android:name="dk.itu.moapd.x9.mhiv.ui.main.MainFragment"
+        android:label="@string/fragment_main"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_main_to_traffic_report"
+            app:destination="@id/fragment_traffic_report" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_traffic_report"
+        android:name="dk.itu.moapd.x9.mhiv.ui.main.TrafficReportFragment"
+        android:label="@string/fragment_traffic_report"
+        tools:layout="@layout/fragment_traffic_report" />
+</navigation>

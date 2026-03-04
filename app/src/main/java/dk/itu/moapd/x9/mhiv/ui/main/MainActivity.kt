@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -14,21 +16,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val reportData = intent.getStringExtra("reportData")
+        val navHostFragment = supportFragmentManager
+                .findFragmentById(
+                    R.id.fragment_container_view
+                ) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        if(reportData != null) {
-            Log.i("Report info", reportData)
-        }
-
-        setupUI()
+//        val reportData = intent.getStringExtra("reportData")
+//
+//        if(reportData != null) {
+//            Log.i("Report info", reportData)
+//        }
+//
+//        setupUI()
     }
 
-    private fun setupUI() {
-        with(binding) {
-            goToReportBtn.setOnClickListener {
-                val intent = Intent(this@MainActivity, TrafficReportActivity::class.java)
-                startActivity(intent)
-            }
-        }
-    }
+//    private fun setupUI() {
+//        with(binding) {
+//            goToReportBtn.setOnClickListener {
+//                val intent = Intent(this@MainActivity, TrafficReportActivity::class.java)
+//                startActivity(intent)
+//            }
+//        }
+//    }
 }
