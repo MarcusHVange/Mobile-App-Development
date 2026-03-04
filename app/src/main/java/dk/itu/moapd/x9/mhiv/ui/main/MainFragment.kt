@@ -8,8 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.databinding.FragmentMainBinding
+import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
+import dk.itu.moapd.x9.mhiv.ui.list.CustomAdapter
 import dk.itu.moapd.x9.mhiv.ui.utils.viewBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -47,6 +50,10 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val adapter = CustomAdapter(createDummyData())
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+
         parentFragmentManager.setFragmentResultListener("Report", viewLifecycleOwner) { _, bundle ->
             val reportData = bundle.getString("reportData")
             if(reportData != null) {
@@ -58,6 +65,31 @@ class MainFragment : Fragment() {
         binding.goToReportBtn.setOnClickListener {
             findNavController().navigate(R.id.action_main_to_traffic_report)
         }
+    }
+
+    private fun createDummyData(): List<DummyModel> {
+        val dummy1 = DummyModel(
+            reportTitle = "Big highway accident",
+            reportType = "accident",
+            reportDescription = "Two cars have collided on the highway",
+            reportPriority = "Major"
+        )
+
+        val dummy2 = DummyModel (
+            reportTitle = "Police setup on roads",
+            reportType = "speed camera",
+            reportDescription = "Police have setup speed cameras along the roads",
+            reportPriority = "Moderate"
+        )
+
+        val dummy3 = DummyModel (
+            reportTitle = "Traffic jam",
+            reportType = "heavy traffic",
+            reportDescription = "There is a pretty heavy traffic jam on the highway",
+            reportPriority = "Minor"
+        )
+
+        return listOf(dummy1, dummy2, dummy3)
     }
 
     companion object {
