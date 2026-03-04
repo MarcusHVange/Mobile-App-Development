@@ -13,9 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.X9">
         <activity
-            android:name=".ui.main.TrafficReportActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true">
             <intent-filter>

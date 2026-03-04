@@ -106,10 +106,8 @@ class TrafficReportFragment : Fragment() {
                     "Report",
                     Bundle().apply { putString("reportData", formData) }
                 )
-//                val intent = Intent(this@TrafficReportFragment, MainActivity::class.java).apply {
-//                    putExtra("reportData", formData)
-//                }
-//                startActivity(intent)
+
+                findNavController().navigateUp()
             }
         }
     }

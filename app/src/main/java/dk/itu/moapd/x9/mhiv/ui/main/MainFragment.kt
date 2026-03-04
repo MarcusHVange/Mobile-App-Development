@@ -1,6 +1,7 @@
 package dk.itu.moapd.x9.mhiv.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,14 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        parentFragmentManager.setFragmentResultListener("Report", viewLifecycleOwner) { _, bundle ->
+            val reportData = bundle.getString("reportData")
+            if(reportData != null) {
+                Log.i("Report info", reportData)
+            }
+        }
+
         binding.goToReportBtn.setOnClickListener {
             findNavController().navigate(R.id.action_main_to_traffic_report)
         }
