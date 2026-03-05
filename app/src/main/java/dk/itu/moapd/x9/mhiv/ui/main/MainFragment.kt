@@ -1,7 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.databinding.FragmentMainBinding
-import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
 import dk.itu.moapd.x9.mhiv.ui.list.CustomAdapter
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
 import dk.itu.moapd.x9.mhiv.ui.utils.viewBinding
@@ -68,31 +66,6 @@ class MainFragment : Fragment() {
         binding.goToReportBtn.setOnClickListener {
             findNavController().navigate(R.id.action_main_to_traffic_report)
         }
-    }
-
-    private fun createDummyData(): List<DummyModel> {
-        val dummy1 = DummyModel(
-            reportTitle = "Big highway accident",
-            reportType = "accident",
-            reportDescription = "Two cars have collided on the highway",
-            reportPriority = "Major"
-        )
-
-        val dummy2 = DummyModel (
-            reportTitle = "Police setup on roads",
-            reportType = "speed camera",
-            reportDescription = "Police have setup speed cameras along the roads",
-            reportPriority = "Moderate"
-        )
-
-        val dummy3 = DummyModel (
-            reportTitle = "Traffic jam",
-            reportType = "heavy traffic",
-            reportDescription = "There is a pretty heavy traffic jam on the highway",
-            reportPriority = "Minor"
-        )
-
-        return listOf(dummy1, dummy2, dummy3)
     }
 
     companion object {

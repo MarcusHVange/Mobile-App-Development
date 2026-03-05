@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import dk.itu.moapd.x9.mhiv.R
 import androidx.fragment.app.activityViewModels
 import dk.itu.moapd.x9.mhiv.databinding.FragmentTrafficReportBinding
-import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
 import dk.itu.moapd.x9.mhiv.ui.utils.viewBinding
 
@@ -106,7 +106,7 @@ class TrafficReportFragment : Fragment() {
                 val reportDescription = formReportDescription.text?.toString()?.trim().orEmpty()
                 val reportPriority = formReportPriority.text?.toString()?.trim().orEmpty()
 
-                val newReport = DummyModel(
+                val newReport = TrafficReportModel(
                     reportTitle = reportTitle,
                     reportType = reportType,
                     reportDescription = reportDescription,

@@ -5,19 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dk.itu.moapd.x9.mhiv.databinding.RowItemBinding
-import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 
-class CustomAdapter(private var data: List<DummyModel>) :
+class CustomAdapter(private var data: List<TrafficReportModel>) :
     RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     class ViewHolder(private val binding: RowItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(dummy: DummyModel) {
-            binding.reportTitleCardText.text = dummy.reportTitle
-            binding.reportTypeCardText.text = dummy.reportType
-            binding.reportDescriptionCardText.text = dummy.reportDescription
-            binding.reportPriorityText.text = dummy.reportPriority
+        fun bind(trafficReport: TrafficReportModel) {
+            binding.reportTitleCardText.text = trafficReport.reportTitle
+            binding.reportTypeCardText.text = trafficReport.reportType
+            binding.reportDescriptionCardText.text = trafficReport.reportDescription
+            binding.reportPriorityText.text = trafficReport.reportPriority
         }
     }
 
@@ -35,7 +35,7 @@ class CustomAdapter(private var data: List<DummyModel>) :
     override fun getItemCount() = data.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(items: List<DummyModel>) {
+    fun submitList(items: List<TrafficReportModel>) {
         data = items
         notifyDataSetChanged()
     }
