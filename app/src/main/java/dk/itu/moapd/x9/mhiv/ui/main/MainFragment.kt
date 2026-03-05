@@ -57,9 +57,12 @@ class MainFragment : Fragment() {
 
         viewModel.cont.observe(viewLifecycleOwner) { reportData ->
             adapter.submitList(reportData)
+        }
 
-            if(!reportData.isEmpty()) {
+        viewModel.reportCreated.observe(viewLifecycleOwner) { wasCreated ->
+            if (wasCreated) {
                 Toast.makeText(requireContext(), "Report created", Toast.LENGTH_SHORT).show()
+                viewModel.onReportCreatedToastShown()
             }
         }
 

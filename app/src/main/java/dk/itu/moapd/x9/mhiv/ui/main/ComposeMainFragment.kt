@@ -61,9 +61,10 @@ class ComposeMainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.cont.observe(viewLifecycleOwner) { reportData ->
-            if (reportData.isNotEmpty()) {
+        viewModel.reportCreated.observe(viewLifecycleOwner) { wasCreated ->
+            if (wasCreated) {
                 Toast.makeText(requireContext(), "Report created", Toast.LENGTH_SHORT).show()
+                viewModel.onReportCreatedToastShown()
             }
         }
     }

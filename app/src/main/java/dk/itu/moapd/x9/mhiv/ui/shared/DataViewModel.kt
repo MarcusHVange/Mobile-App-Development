@@ -11,32 +11,36 @@ class DataViewModel(
 ) : ViewModel() {
     companion object {
         private const val CONT_KEY = "CONT_KEY"
-        private const val STATUS_KEY = "STATUS_KEY"
+        private const val REPORT_CREATED_KEY = "REPORT_CREATED_KEY"
     }
 
     private val _cont: MutableLiveData<List<TrafficReportModel>> by lazy {
         savedStateHandle.getLiveData(CONT_KEY, emptyList<TrafficReportModel>())
     }
 
-    var status: Boolean
-        get() = savedStateHandle.get<Boolean>(STATUS_KEY) ?: false
-        set(value) = savedStateHandle.set(STATUS_KEY, value)
+    private val _reportCreated: MutableLiveData<Boolean> by lazy {
+        savedStateHandle.getLiveData(REPORT_CREATED_KEY, false)
+    }
 
     val cont: LiveData<List<TrafficReportModel>>
         get() = _cont
 
-    fun resetCont() {
-        _cont.value = emptyList<TrafficReportModel>()
-    }
+    val reportCreated: LiveData<Boolean>
+        get() = _reportCreated
 
     fun appendCont(item: TrafficReportModel) {
         val currentList = _cont.value ?: emptyList()
         val updatedList = currentList + item
         _cont.value = updatedList
+        _reportCreated.value = true
     }
 
     fun deleteCont(index: Int) {
         val current = _cont.value ?: emptyList()
         _cont.value = current.toMutableList().apply { removeAt(index) }
+    }
+
+    fun onReportCreatedToastShown() {
+        _reportCreated.value = false
     }
 }
