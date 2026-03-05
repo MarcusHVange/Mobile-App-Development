@@ -1,12 +1,13 @@
 package dk.itu.moapd.x9.mhiv.ui.list
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dk.itu.moapd.x9.mhiv.databinding.RowItemBinding
 import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
 
-class CustomAdapter(private val data: List<DummyModel>) :
+class CustomAdapter(private var data: List<DummyModel>) :
     RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     class ViewHolder(private val binding: RowItemBinding) :
@@ -32,4 +33,10 @@ class CustomAdapter(private val data: List<DummyModel>) :
     }
 
     override fun getItemCount() = data.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(items: List<DummyModel>) {
+        data = items
+        notifyDataSetChanged()
+    }
 }

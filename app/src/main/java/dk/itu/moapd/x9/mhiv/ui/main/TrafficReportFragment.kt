@@ -1,6 +1,5 @@
 package dk.itu.moapd.x9.mhiv.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
 import dk.itu.moapd.x9.mhiv.R
-import dk.itu.moapd.x9.mhiv.databinding.FragmentMainBinding
+import androidx.fragment.app.activityViewModels
 import dk.itu.moapd.x9.mhiv.databinding.FragmentTrafficReportBinding
+import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
+import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
 import dk.itu.moapd.x9.mhiv.ui.utils.viewBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -28,6 +29,7 @@ class TrafficReportFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private val binding by viewBinding(FragmentTrafficReportBinding::bind)
+    private val viewModel: DataViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,13 +106,14 @@ class TrafficReportFragment : Fragment() {
                 val reportDescription = formReportDescription.text?.toString()?.trim().orEmpty()
                 val reportPriority = formReportPriority.text?.toString()?.trim().orEmpty()
 
-                val formData =
-                    "Report Title: $reportTitle\nReport Type: $reportType\nReport Description: $reportDescription\nReport Priority: $reportPriority"
-
-                parentFragmentManager.setFragmentResult(
-                    "Report",
-                    Bundle().apply { putString("reportData", formData) }
+                val newReport = DummyModel(
+                    reportTitle = reportTitle,
+                    reportType = reportType,
+                    reportDescription = reportDescription,
+                    reportPriority = reportPriority
                 )
+
+                viewModel.appendCont(newReport)
 
                 findNavController().navigateUp()
             }

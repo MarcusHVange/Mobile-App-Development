@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.databinding.FragmentMainBinding
 import dk.itu.moapd.x9.mhiv.domain.model.DummyModel
 import dk.itu.moapd.x9.mhiv.ui.list.CustomAdapter
+import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
 import dk.itu.moapd.x9.mhiv.ui.utils.viewBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,6 +32,7 @@ class MainFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private val binding by viewBinding(FragmentMainBinding::bind)
+    private val viewModel: DataViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +53,14 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = CustomAdapter(createDummyData())
+        val adapter = CustomAdapter(emptyList())
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
-        parentFragmentManager.setFragmentResultListener("Report", viewLifecycleOwner) { _, bundle ->
-            val reportData = bundle.getString("reportData")
-            if(reportData != null) {
-                Log.i("Report info", reportData)
+        viewModel.cont.observe(viewLifecycleOwner) { reportData ->
+            adapter.submitList(reportData)
+
+            if(!reportData.isEmpty()) {
                 Toast.makeText(requireContext(), "Report created", Toast.LENGTH_SHORT).show()
             }
         }
