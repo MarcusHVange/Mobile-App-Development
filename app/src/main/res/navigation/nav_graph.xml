@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragment_main">
+    app:startDestination="@id/fragment_compose_main">
 
     <fragment
         android:id="@+id/fragment_main"
@@ -14,6 +14,16 @@
             android:id="@+id/action_main_to_traffic_report"
             app:destination="@id/fragment_traffic_report" />
     </fragment>
+
+    <fragment
+        android:id="@+id/fragment_compose_main"
+        android:name="dk.itu.moapd.x9.mhiv.ui.main.ComposeMainFragment"
+        android:label="Compose Main">
+        <action
+            android:id="@+id/action_compose_main_to_traffic_report"
+            app:destination="@id/fragment_traffic_report" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/fragment_traffic_report"
