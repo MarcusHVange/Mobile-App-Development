@@ -1,6 +1,5 @@
 package dk.itu.moapd.x9.mhiv.ui.list
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,9 +33,9 @@ class CustomAdapter(private var data: List<TrafficReportModel>) :
 
     override fun getItemCount() = data.size
 
-    @SuppressLint("NotifyDataSetChanged")
     fun submitList(items: List<TrafficReportModel>) {
+        if (items.size <= data.size) return
         data = items
-        notifyDataSetChanged()
+        notifyItemInserted(items.lastIndex)
     }
 }
