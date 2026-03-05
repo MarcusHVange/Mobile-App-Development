@@ -15,7 +15,8 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 @Composable
 fun MainScreen(
     reports: List<TrafficReportModel>,
-    onAddReportNavigate: () -> Unit
+    onAddReportNavigate: () -> Unit,
+    onDelete: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -31,6 +32,6 @@ fun MainScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TrafficReportList(reports = reports)
+        TrafficReportList(reports, onDelete)
     }
 }

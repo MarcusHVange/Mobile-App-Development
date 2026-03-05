@@ -47,6 +47,9 @@ class ComposeMainFragment : Fragment() {
                             reports = reports,
                             onAddReportNavigate = {
                                 findNavController().navigate(R.id.action_compose_main_to_traffic_report)
+                            },
+                            onDelete = { index ->
+                                viewModel.deleteCont(index)
                             }
                         )
                     }

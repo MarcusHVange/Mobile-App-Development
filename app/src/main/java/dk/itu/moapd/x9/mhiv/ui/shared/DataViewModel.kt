@@ -34,4 +34,9 @@ class DataViewModel(
         val updatedList = currentList + item
         _cont.value = updatedList
     }
+
+    fun deleteCont(index: Int) {
+        val current = _cont.value ?: emptyList()
+        _cont.value = current.toMutableList().apply { removeAt(index) }
+    }
 }
