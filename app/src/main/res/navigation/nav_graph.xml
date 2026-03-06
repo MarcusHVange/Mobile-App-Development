@@ -6,18 +6,8 @@
     app:startDestination="@id/fragment_compose_main">
 
     <fragment
-        android:id="@+id/fragment_main"
-        android:name="dk.itu.moapd.x9.mhiv.ui.main.MainFragment"
-        android:label="@string/fragment_main"
-        tools:layout="@layout/fragment_main">
-        <action
-            android:id="@+id/action_main_to_traffic_report"
-            app:destination="@id/fragment_traffic_report" />
-    </fragment>
-
-    <fragment
         android:id="@+id/fragment_compose_main"
-        android:name="dk.itu.moapd.x9.mhiv.ui.main.ComposeMainFragment"
+        android:name="dk.itu.moapd.x9.mhiv.ui.main.MainFragment"
         android:label="Compose Main">
         <action
             android:id="@+id/action_compose_main_to_traffic_report"
