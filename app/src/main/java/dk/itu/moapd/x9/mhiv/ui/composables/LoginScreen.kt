@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -96,7 +97,13 @@ fun LoginScreen(
 
             LoginOptionButton(
                 label = "Google",
-                icon = { GooglePlaceholderIcon() },
+                icon = {
+                    Image(
+                        painter = painterResource(R.drawable.google_logo),
+                        contentDescription = "Google",
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
                 onClick = onGoogleLogin
             )
 
@@ -143,24 +150,5 @@ private fun LoginOptionButton(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-    }
-}
-
-@Composable
-private fun GooglePlaceholderIcon() {
-    Box(
-        modifier = Modifier
-            .size(24.dp)
-            .clip(CircleShape)
-            .background(Color.White)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.onSurface, shape = CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "G",
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
