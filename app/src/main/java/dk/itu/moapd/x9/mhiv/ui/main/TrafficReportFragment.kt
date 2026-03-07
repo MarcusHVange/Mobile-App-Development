@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
 import dk.itu.moapd.x9.mhiv.R
 import androidx.fragment.app.activityViewModels
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.x9.mhiv.databinding.FragmentTrafficReportBinding
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
@@ -51,6 +53,15 @@ class TrafficReportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         restoreState(savedInstanceState)
         setupUI()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val auth = FirebaseAuth.getInstance()
+
+        if(auth.currentUser == null) {
+            startLoginActivity()
+        }
     }
 
     companion object {
@@ -202,5 +213,12 @@ class TrafficReportFragment : Fragment() {
             formReportDescriptionLayout.error = savedInstanceState.getString(KEY_DESCRIPTION_ERROR)
             formReportPriorityLayout.error = savedInstanceState.getString(KEY_PRIORITY_ERROR)
         }
+    }
+
+    private fun startLoginActivity() {
+        Intent(requireContext(), LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }.let(::startActivity)
     }
 }

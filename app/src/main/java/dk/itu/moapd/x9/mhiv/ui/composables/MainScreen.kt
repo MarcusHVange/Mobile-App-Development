@@ -32,9 +32,10 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 @Composable
 fun MainScreen(
     reports: List<TrafficReportModel>,
+    isLoggedIn: Boolean,
     onAddReportNavigate: () -> Unit,
     onDelete: (Int) -> Unit,
-    onLogout: () -> Unit
+    authAction: (Boolean) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -51,10 +52,10 @@ fun MainScreen(
                     .widthIn(max = 680.dp)
             ) {
                 Button(
-                    onClick = onLogout,
+                    onClick = { authAction(isLoggedIn) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text(text = "Log out")
+                    Text(text = if (isLoggedIn) "Log out" else "Log in")
                 }
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -68,21 +69,23 @@ fun MainScreen(
                 )
                 Spacer(modifier = Modifier.height(28.dp))
 
-                Button(
-                    onClick = onAddReportNavigate,
-                    modifier = Modifier.align(Alignment.Start),
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                ) {
-                    Text(text = "Add new")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null
-                    )
+                if(isLoggedIn) {
+                    Button(
+                        onClick = onAddReportNavigate,
+                        modifier = Modifier.align(Alignment.Start),
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    ) {
+                        Text(text = "Add new")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }
@@ -94,6 +97,7 @@ fun MainScreen(
             ) {
                 TrafficReportItem(
                     reportData = report,
+                    isLoggedIn  = isLoggedIn,
                     onDelete = { onDelete(index) }
                 )
             }

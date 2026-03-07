@@ -29,7 +29,8 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 @Composable
 fun TrafficReportItem(
     reportData: TrafficReportModel,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    isLoggedIn: Boolean
 ) {
     val labelColor = MaterialTheme.colorScheme.onSurface
     val valueColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -63,12 +64,14 @@ fun TrafficReportItem(
                     }
                 }
 
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_delete_24),
-                        contentDescription = "Delete report",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                if(isLoggedIn) {
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            painter = painterResource(R.drawable.outline_delete_24),
+                            contentDescription = "Delete report",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
 

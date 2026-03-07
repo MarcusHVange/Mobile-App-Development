@@ -21,11 +21,13 @@ import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
+import dk.itu.moapd.x9.mhiv.ui.shared.SessionViewModel
 import dk.itu.moapd.x9.mhiv.ui.theme.X9Theme
 
 class MainFragment : Fragment() {
 
-    private val viewModel: DataViewModel by activityViewModels()
+    private val dataViewModel: DataViewModel by activityViewModels()
+    private val sessionViewModel: SessionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +40,8 @@ class MainFragment : Fragment() {
             )
 
             setContent {
-                val reports by viewModel.cont.observeAsState(emptyList())
+                val reports by dataViewModel.cont.observeAsState(emptyList())
+                val isLoggedIn by sessionViewModel.isLoggedIn.observeAsState(false)
 
                 X9Theme {
                     Surface(
@@ -47,19 +50,15 @@ class MainFragment : Fragment() {
                     ) {
                         MainScreen(
                             reports = reports,
+                            isLoggedIn=isLoggedIn,
                             onAddReportNavigate = {
                                 findNavController().navigate(R.id.action_compose_main_to_traffic_report)
                             },
                             onDelete = { index ->
-                                viewModel.deleteCont(index)
+                                dataViewModel.deleteCont(index)
                             },
-                            onLogout = {
-                                FirebaseAuth.getInstance().signOut()
-
-                                Intent(requireContext(), LoginActivity::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                                            Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                }.let(::startActivity)
+                            authAction={ isLoggedIn ->
+                                authAction(isLoggedIn)
                             }
                         )
                     }
@@ -71,11 +70,19 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.reportCreated.observe(viewLifecycleOwner) { wasCreated ->
+        dataViewModel.reportCreated.observe(viewLifecycleOwner) { wasCreated ->
             if (wasCreated) {
                 Toast.makeText(requireContext(), "Report created", Toast.LENGTH_SHORT).show()
-                viewModel.onReportCreatedToastShown()
+                dataViewModel.onReportCreatedToastShown()
             }
+        }
+    }
+
+    fun authAction(isLoggedIn: Boolean) {
+        if (isLoggedIn) {
+            sessionViewModel.signOut()
+        } else {
+            Intent(requireContext(), LoginActivity::class.java).let(::startActivity)
         }
     }
 }
