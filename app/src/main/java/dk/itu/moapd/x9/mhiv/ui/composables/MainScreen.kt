@@ -33,7 +33,8 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 fun MainScreen(
     reports: List<TrafficReportModel>,
     onAddReportNavigate: () -> Unit,
-    onDelete: (Int) -> Unit
+    onDelete: (Int) -> Unit,
+    onLogout: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -49,6 +50,14 @@ fun MainScreen(
                     .fillMaxWidth()
                     .widthIn(max = 680.dp)
             ) {
+                Button(
+                    onClick = onLogout,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(text = "Log out")
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = "X9",
                     modifier = Modifier.fillMaxWidth(),

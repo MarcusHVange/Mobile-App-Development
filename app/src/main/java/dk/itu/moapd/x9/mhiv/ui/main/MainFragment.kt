@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
@@ -50,6 +52,14 @@ class MainFragment : Fragment() {
                             },
                             onDelete = { index ->
                                 viewModel.deleteCont(index)
+                            },
+                            onLogout = {
+                                FirebaseAuth.getInstance().signOut()
+
+                                Intent(requireContext(), LoginActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                            Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                }.let(::startActivity)
                             }
                         )
                     }
