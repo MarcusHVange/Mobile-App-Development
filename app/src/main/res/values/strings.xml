@@ -28,7 +28,12 @@
     </string-array>
     <string name="submit_btn_text">Submit</string>
     <string name="back_button_content_description">Back</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_title">Sign in to X9</string>
+    <string name="login_email_button">Email and password</string>
+    <string name="login_phone_button">Phone</string>
+    <string name="login_google_button">Gmail</string>
+    <string name="login_guest_button">Visit as guest</string>
+    <string name="login_success_message">User logged in the app.</string>
+    <string name="login_failed_message">Authentication failed.</string>
     <string name="report_title">New report</string>
 </resources>

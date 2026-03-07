@@ -2,25 +2,13 @@ package dk.itu.moapd.x9.mhiv.ui.shared
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 
-class DataViewModel(
-    private val savedStateHandle: SavedStateHandle,
-) : ViewModel() {
-    companion object {
-        private const val CONT_KEY = "CONT_KEY"
-        private const val REPORT_CREATED_KEY = "REPORT_CREATED_KEY"
-    }
+class DataViewModel : ViewModel() {
+    private val _cont = MutableLiveData<List<TrafficReportModel>>(emptyList())
 
-    private val _cont: MutableLiveData<List<TrafficReportModel>> by lazy {
-        savedStateHandle.getLiveData(CONT_KEY, emptyList<TrafficReportModel>())
-    }
-
-    private val _reportCreated: MutableLiveData<Boolean> by lazy {
-        savedStateHandle.getLiveData(REPORT_CREATED_KEY, false)
-    }
+    private val _reportCreated = MutableLiveData(false)
 
     val cont: LiveData<List<TrafficReportModel>>
         get() = _cont

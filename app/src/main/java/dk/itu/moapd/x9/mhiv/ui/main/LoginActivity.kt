@@ -2,14 +2,24 @@ package dk.itu.moapd.x9.mhiv.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import dk.itu.moapd.x9.mhiv.R
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import dk.itu.moapd.x9.mhiv.R
+import dk.itu.moapd.x9.mhiv.ui.composables.LoginScreen
+import dk.itu.moapd.x9.mhiv.ui.theme.X9Theme
 
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
@@ -19,18 +29,44 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createSignInIntent()
+
+        auth = FirebaseAuth.getInstance()
+
+        if (auth.currentUser != null) {
+            startMainActivity()
+            return
+        }
+
+        setContent {
+            X9Theme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    LoginScreen(
+                        onEmailLogin = { launchEmailSignIn() },
+                        onPhoneLogin = { launchPhoneSignIn() },
+                        onGoogleLogin = { launchGoogleSignIn() },
+                        onContinueAsGuest = { continueAsGuest() }
+                    )
+                }
+            }
+        }
     }
 
-    private fun createSignInIntent() {
+    private fun launchEmailSignIn() {
+        launchSignInFlow(listOf(AuthUI.IdpConfig.EmailBuilder().build()))
+    }
 
-        // Choose authentication providers.
-        val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
-            AuthUI.IdpConfig.PhoneBuilder().build(),
-            AuthUI.IdpConfig.GoogleBuilder().build())
+    private fun launchPhoneSignIn() {
+        launchSignInFlow(listOf(AuthUI.IdpConfig.PhoneBuilder().build()))
+    }
 
-        // Create and launch sign-in intent.
+    private fun launchGoogleSignIn() {
+        launchSignInFlow(listOf(AuthUI.IdpConfig.GoogleBuilder().build()))
+    }
+
+    private fun launchSignInFlow(providers: List<AuthUI.IdpConfig>) {
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
@@ -46,25 +82,28 @@ class LoginActivity : AppCompatActivity() {
         signInLauncher.launch(signInIntent)
     }
 
+    private fun continueAsGuest() {
+        startMainActivity()
+    }
+
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         when (result.resultCode) {
             RESULT_OK -> {
-                // Successfully signed in.
-                showSnackBar("User logged in the app.")
+                showSnackBar(getString(R.string.login_success_message))
                 startMainActivity()
             }
+
             else -> {
-                // Sign in failed.
-                showSnackBar("Authentication failed.")
+                showSnackBar(getString(R.string.login_failed_message))
             }
         }
     }
 
     private fun startMainActivity() {
         Intent(this, MainActivity::class.java).apply {
-            startActivity(this)
-            finish()
-        }
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }.let(::startActivity)
     }
 
     private fun showSnackBar(message: String) {
