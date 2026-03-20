@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ fun MainScreen(
     onDelete: (Int) -> Unit,
     authAction: (Boolean) -> Unit
 ) {
+    val screenBackground = colorResource(R.color.background_light)
     val screenHorizontalPadding = dimensionResource(R.dimen.horizontal_padding)
     val screenVerticalPadding = dimensionResource(R.dimen.vertical_padding)
     val sectionSpacing = dimensionResource(R.dimen.section_spacing_medium)
@@ -50,7 +52,7 @@ fun MainScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(screenBackground),
         contentPadding = PaddingValues(
             horizontal = screenHorizontalPadding,
             vertical = screenVerticalPadding

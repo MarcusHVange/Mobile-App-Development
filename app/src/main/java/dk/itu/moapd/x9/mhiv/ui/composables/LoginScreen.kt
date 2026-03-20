@@ -2,10 +2,8 @@ package dk.itu.moapd.x9.mhiv.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -27,7 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +41,7 @@ fun LoginScreen(
     onGoogleLogin: () -> Unit,
     onContinueAsGuest: () -> Unit
 ) {
+    val screenBackground = colorResource(R.color.background_light)
     val screenHorizontalPadding = dimensionResource(R.dimen.horizontal_padding)
     val screenVerticalPadding = dimensionResource(R.dimen.vertical_padding)
     val loginContentWidth = dimensionResource(R.dimen.login_screen_content_width)
@@ -54,7 +52,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(screenBackground)
             .verticalScroll(rememberScrollState())
             .padding(
                 horizontal = screenHorizontalPadding,
