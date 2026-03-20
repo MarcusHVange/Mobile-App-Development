@@ -69,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
     private fun launchSignInFlow(providers: List<AuthUI.IdpConfig>) {
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
+            .setCredentialManagerEnabled(false)
             .setAvailableProviders(providers)
             .setLogo(R.drawable.baseline_firebase_24)
             .setTheme(R.style.Theme_X9)
