@@ -65,7 +65,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
     implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.ui.database)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
