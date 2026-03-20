@@ -78,7 +78,7 @@ class TrafficReportFragment : Fragment(R.layout.fragment_traffic_report) {
                     reportPriority = reportPriority
                 )
 
-                viewModel.appendCont(newReport)
+                viewModel.addReport(newReport)
 
                 findNavController().navigateUp()
             }

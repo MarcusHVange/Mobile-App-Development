@@ -40,7 +40,7 @@ class MainFragment : Fragment() {
             )
 
             setContent {
-                val reports by dataViewModel.cont.observeAsState(emptyList())
+                val reports by dataViewModel.reports.observeAsState(emptyList())
                 val isLoggedIn by sessionViewModel.isLoggedIn.observeAsState(false)
 
                 X9Theme {
@@ -55,7 +55,7 @@ class MainFragment : Fragment() {
                                 findNavController().navigate(R.id.action_compose_main_to_traffic_report)
                             },
                             onDelete = { index ->
-                                dataViewModel.deleteCont(index)
+                                dataViewModel.deleteReport(index)
                             },
                             authAction={ isLoggedIn ->
                                 authAction(isLoggedIn)
