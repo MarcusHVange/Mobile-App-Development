@@ -28,12 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import dk.itu.moapd.x9.mhiv.R
 
 
@@ -44,73 +44,83 @@ fun LoginScreen(
     onGoogleLogin: () -> Unit,
     onContinueAsGuest: () -> Unit
 ) {
+    val screenHorizontalPadding = dimensionResource(R.dimen.horizontal_padding)
+    val screenVerticalPadding = dimensionResource(R.dimen.vertical_padding)
+    val loginContentWidth = dimensionResource(R.dimen.login_screen_content_width)
+    val loginSectionSpacing = dimensionResource(R.dimen.login_screen_section_spacing)
+    val mediumSpacing = dimensionResource(R.dimen.section_spacing_medium)
+    val loginIconSize = dimensionResource(R.dimen.login_screen_icon_size)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F8F8))
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+            .padding(
+                horizontal = screenHorizontalPadding,
+                vertical = screenVerticalPadding
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
-            modifier = Modifier.width(250.dp),
+            modifier = Modifier.width(loginContentWidth),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Sign in",
+                text = stringResource(R.string.login_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(loginSectionSpacing))
 
             LoginOptionButton(
-                label = "Email & password",
+                label = stringResource(R.string.login_email_button),
                 icon = {
                     Icon(
                         painter = painterResource(R.drawable.outline_person_24),
-                        contentDescription = "Person",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 onClick = onEmailLogin
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(mediumSpacing))
 
             LoginOptionButton(
-                label = "Phone",
+                label = stringResource(R.string.login_phone_button),
                 icon = {
                     Icon(
                         painter = painterResource(R.drawable.outline_local_phone_24),
-                        contentDescription = "phone",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 onClick = onPhoneLogin
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(mediumSpacing))
 
             LoginOptionButton(
-                label = "Google",
+                label = stringResource(R.string.login_google_button),
                 icon = {
                     Image(
                         painter = painterResource(R.drawable.google_logo),
-                        contentDescription = "Google",
-                        modifier = Modifier.size(24.dp)
+                        contentDescription = null,
+                        modifier = Modifier.size(loginIconSize)
                     )
                 },
                 onClick = onGoogleLogin
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(loginSectionSpacing))
 
             Text(
-                text = "View as guest",
+                text = stringResource(R.string.login_guest_button),
                 modifier = Modifier.clickable(onClick = onContinueAsGuest),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -126,23 +136,32 @@ private fun LoginOptionButton(
     icon: @Composable () -> Unit,
     onClick: () -> Unit
 ) {
+    val cornerRadius = dimensionResource(R.dimen.login_screen_button_corner_radius)
+    val buttonHorizontalPadding = dimensionResource(R.dimen.card_padding)
+    val buttonVerticalPadding = dimensionResource(R.dimen.section_spacing_medium)
+    val iconLabelSpacing = dimensionResource(R.dimen.login_screen_label_spacing)
+    val buttonElevation = dimensionResource(R.dimen.card_elevation)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = buttonElevation)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
+                .padding(
+                    horizontal = buttonHorizontalPadding,
+                    vertical = buttonVerticalPadding
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             icon()
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(iconLabelSpacing))
 
             Text(
                 text = label,

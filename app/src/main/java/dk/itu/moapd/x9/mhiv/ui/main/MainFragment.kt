@@ -72,7 +72,11 @@ class MainFragment : Fragment() {
 
         dataViewModel.reportCreated.observe(viewLifecycleOwner) { wasCreated ->
             if (wasCreated) {
-                Toast.makeText(requireContext(), "Report created", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.report_created_message),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dataViewModel.onReportCreatedToastShown()
             }
         }

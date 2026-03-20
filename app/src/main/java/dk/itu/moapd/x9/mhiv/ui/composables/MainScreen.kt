@@ -23,10 +23,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 
 @Composable
@@ -37,50 +38,66 @@ fun MainScreen(
     onDelete: (Int) -> Unit,
     authAction: (Boolean) -> Unit
 ) {
+    val screenHorizontalPadding = dimensionResource(R.dimen.horizontal_padding)
+    val screenVerticalPadding = dimensionResource(R.dimen.vertical_padding)
+    val sectionSpacing = dimensionResource(R.dimen.section_spacing_medium)
+    val smallSpacerHeight = dimensionResource(R.dimen.main_screen_title_spacing_small)
+    val largeSpacerHeight = dimensionResource(R.dimen.main_screen_title_spacing_large)
+    val iconSpacing = dimensionResource(R.dimen.main_screen_icon_spacing)
+    val maxContentWidth = dimensionResource(R.dimen.main_screen_content_width)
+    val pillCornerRadius = dimensionResource(R.dimen.main_screen_pill_corner_radius)
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F8F8)),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+            .background(MaterialTheme.colorScheme.background),
+        contentPadding = PaddingValues(
+            horizontal = screenHorizontalPadding,
+            vertical = screenVerticalPadding
+        ),
+        verticalArrangement = Arrangement.spacedBy(sectionSpacing),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .widthIn(max = 680.dp)
+                    .widthIn(max = maxContentWidth)
             ) {
                 Button(
                     onClick = { authAction(isLoggedIn) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text(text = if (isLoggedIn) "Log out" else "Log in")
+                    Text(
+                        text = stringResource(
+                            if (isLoggedIn) R.string.log_out else R.string.log_in
+                        )
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(smallSpacerHeight))
                 Text(
-                    text = "X9",
+                    text = stringResource(R.string.app_name),
                     modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(largeSpacerHeight))
 
-                if(isLoggedIn) {
+                if (isLoggedIn) {
                     Button(
                         onClick = onAddReportNavigate,
                         modifier = Modifier.align(Alignment.Start),
-                        shape = RoundedCornerShape(50),
+                        shape = RoundedCornerShape(pillCornerRadius),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     ) {
-                        Text(text = "Add new")
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = stringResource(R.string.add_new))
+                        Spacer(modifier = Modifier.width(iconSpacing))
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = null
