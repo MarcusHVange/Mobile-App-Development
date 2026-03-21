@@ -71,14 +71,17 @@ class TrafficReportFragment : Fragment(R.layout.fragment_traffic_report) {
                 val reportDescription = formReportDescription.text?.toString()?.trim().orEmpty()
                 val reportPriority = formReportPriority.text?.toString()?.trim().orEmpty()
 
-                val newReport = TrafficReportModel(
+                viewModel.insertTrafficReport(
                     reportTitle = reportTitle,
                     reportType = reportType,
                     reportDescription = reportDescription,
                     reportPriority = reportPriority
                 )
 
-                viewModel.addReport(newReport)
+                findNavController()
+                    .previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("report_created", true)
 
                 findNavController().navigateUp()
             }

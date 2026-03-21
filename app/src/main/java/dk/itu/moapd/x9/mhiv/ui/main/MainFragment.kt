@@ -16,7 +16,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
@@ -40,7 +42,8 @@ class MainFragment : Fragment() {
             )
 
             setContent {
-                val reports by dataViewModel.reports.observeAsState(emptyList())
+                val uiState by dataViewModel.uiState.collectAsStateWithLifecycle()
+                val reports = uiState.reports
                 val isLoggedIn by sessionViewModel.isLoggedIn.observeAsState(false)
 
                 X9Theme {
@@ -54,8 +57,8 @@ class MainFragment : Fragment() {
                             onAddReportNavigate = {
                                 findNavController().navigate(R.id.action_compose_main_to_traffic_report)
                             },
-                            onDelete = { index ->
-                                dataViewModel.deleteReport(index)
+                            onDelete = { reportId ->
+                                dataViewModel.deleteTrafficReport(reportId)
                             },
                             authAction={ isLoggedIn ->
                                 authAction(isLoggedIn)
@@ -70,16 +73,21 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dataViewModel.reportCreated.observe(viewLifecycleOwner) { wasCreated ->
-            if (wasCreated) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.report_created_message),
-                    Toast.LENGTH_SHORT
-                ).show()
-                dataViewModel.onReportCreatedToastShown()
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
+        savedStateHandle
+            ?.getLiveData<Boolean>("report_created")
+            ?.observe(viewLifecycleOwner) { created ->
+                if (created) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.report_created_message),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    savedStateHandle.remove<Boolean>("report_created")
+                }
             }
-        }
     }
 
     fun authAction(isLoggedIn: Boolean) {

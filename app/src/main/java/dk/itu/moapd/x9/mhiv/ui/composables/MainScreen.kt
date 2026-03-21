@@ -36,7 +36,7 @@ fun MainScreen(
     reports: List<TrafficReportModel>,
     isLoggedIn: Boolean,
     onAddReportNavigate: () -> Unit,
-    onDelete: (Int) -> Unit,
+    onDelete: (String) -> Unit,
     authAction: (Boolean) -> Unit
 ) {
     val screenBackground = colorResource(R.color.background_light)
@@ -109,7 +109,7 @@ fun MainScreen(
             }
         }
 
-        itemsIndexed(reports) { index, report ->
+        itemsIndexed(reports) { _, report ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,7 +117,7 @@ fun MainScreen(
                 TrafficReportItem(
                     reportData = report,
                     isLoggedIn  = isLoggedIn,
-                    onDelete = { onDelete(index) }
+                    onDelete = { onDelete(report.id) }
                 )
             }
         }
