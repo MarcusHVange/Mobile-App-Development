@@ -34,6 +34,7 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 @Composable
 fun MainScreen(
     reports: List<TrafficReportModel>,
+    userId: String?,
     isLoggedIn: Boolean,
     onAddReportNavigate: () -> Unit,
     onDelete: (String) -> Unit,
@@ -116,7 +117,8 @@ fun MainScreen(
             ) {
                 TrafficReportItem(
                     reportData = report,
-                    isLoggedIn  = isLoggedIn,
+                    isLoggedIn = isLoggedIn,
+                    isReportOwnedByUser = report.userId == userId,
                     onDelete = { onDelete(report.id) }
                 )
             }

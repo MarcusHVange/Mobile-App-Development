@@ -31,7 +31,8 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 fun TrafficReportItem(
     reportData: TrafficReportModel,
     onDelete: () -> Unit,
-    isLoggedIn: Boolean
+    isLoggedIn: Boolean,
+    isReportOwnedByUser: Boolean
 ) {
     val cardCornerRadius = dimensionResource(R.dimen.card_corner_radius)
     val cardElevation = dimensionResource(R.dimen.card_elevation)
@@ -71,7 +72,7 @@ fun TrafficReportItem(
                     }
                 }
 
-                if (isLoggedIn) {
+                if (isLoggedIn && isReportOwnedByUser) {
                     IconButton(onClick = onDelete) {
                         Icon(
                             painter = painterResource(R.drawable.outline_delete_24),

@@ -53,6 +53,7 @@ class MainFragment : Fragment() {
                     ) {
                         MainScreen(
                             reports = reports,
+                            userId = uiState.userId,
                             isLoggedIn=isLoggedIn,
                             onAddReportNavigate = {
                                 findNavController().navigate(R.id.action_compose_main_to_traffic_report)
