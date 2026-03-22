@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
@@ -34,19 +35,16 @@ class DataViewModel(
     private val _databaseErrorMessage = MutableLiveData<Int?>()
     val databaseErrorMessage: LiveData<Int?> = _databaseErrorMessage
 
+    private var reportsQuery: Query? = null
     private var listener: ValueEventListener? = null
 
     init {
-        observeDummies()
+        observeReports()
     }
 
-    private fun observeDummies() {
+    private fun observeReports() {
+        _uiState.update { it.copy(userId = trafficReportRepository.getCurrentUserId()) }
 
-        // Get the current user ID.
-        val userId = trafficReportRepository.getCurrentUserId() ?: return
-        _uiState.update { it.copy(userId = userId) }
-
-        // Create a query to retrieve all dummies for the current user.
         val query = trafficReportRepository.trafficReportsQuery()
 
         // Create a listener to receive events from the database.
@@ -69,16 +67,17 @@ class DataViewModel(
         }
 
         // Update the listener and add it to the query.
+        reportsQuery = query
         listener = valueListener
         query.addValueEventListener(valueListener)
     }
 
     override fun onCleared() {
         super.onCleared()
-        val userId = trafficReportRepository.getCurrentUserId()
+        val query = reportsQuery
         val l = listener
-        if (userId != null && l != null) {
-            trafficReportRepository.trafficReportsQuery().removeEventListener(l)
+        if (query != null && l != null) {
+            query.removeEventListener(l)
         }
     }
 
