@@ -134,5 +134,6 @@ private fun labeledText(
     withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold, color = labelColor)) {
         append(label)
     }
+    append(" ")
     append(value)
 }
