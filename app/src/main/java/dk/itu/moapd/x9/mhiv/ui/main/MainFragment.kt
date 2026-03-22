@@ -19,7 +19,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
@@ -89,6 +88,17 @@ class MainFragment : Fragment() {
                     savedStateHandle.remove<Boolean>("report_created")
                 }
             }
+
+        dataViewModel.databaseErrorMessage.observe(viewLifecycleOwner) { messageRes ->
+            if (messageRes != null) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(messageRes),
+                    Toast.LENGTH_SHORT
+                ).show()
+                dataViewModel.clearDatabaseErrorMessage()
+            }
+        }
     }
 
     fun authAction(isLoggedIn: Boolean) {

@@ -44,4 +44,7 @@
     <string name="report_description_label">Description</string>
     <string name="report_field_label">%1$s: </string>
     <string name="report_created_message">Report created</string>
+    <string name="database_error_permission_denied">Permission denied.</string>
+    <string name="database_error_network">Network problem. Please try again.</string>
+    <string name="database_error_generic">Something went wrong. Please try again.</string>
 </resources>

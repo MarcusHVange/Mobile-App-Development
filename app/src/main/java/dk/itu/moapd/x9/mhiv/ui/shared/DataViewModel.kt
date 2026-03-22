@@ -1,16 +1,22 @@
 package dk.itu.moapd.x9.mhiv.ui.shared
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import dk.itu.moapd.x9.mhiv.ui.repositories.TrafficReportRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class MainUIState(
     val userId: String? = null,
@@ -24,6 +30,9 @@ class DataViewModel(
     private val _uiState = MutableStateFlow(MainUIState(userId = trafficReportRepository.getCurrentUserId()))
 
     val uiState: StateFlow<MainUIState> = _uiState
+
+    private val _databaseErrorMessage = MutableLiveData<Int?>()
+    val databaseErrorMessage: LiveData<Int?> = _databaseErrorMessage
 
     private var listener: ValueEventListener? = null
 
@@ -55,7 +64,7 @@ class DataViewModel(
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Keep previous state; errors will be handled by Firebase SDK logs.
+                _databaseErrorMessage.value = databaseErrorMessageRes(error)
             }
         }
 
@@ -79,27 +88,60 @@ class DataViewModel(
         reportDescription: String,
         reportPriority: String,
     ) {
-        trafficReportRepository.insertTrafficReport(
-            reportTitle = reportTitle,
-            reportType = reportType,
-            reportDescription = reportDescription,
-            reportPriority = reportPriority
-        )
+        viewModelScope.launch {
+            val error = withContext(Dispatchers.IO) {
+                trafficReportRepository.insertTrafficReport(
+                    reportTitle = reportTitle,
+                    reportType = reportType,
+                    reportDescription = reportDescription,
+                    reportPriority = reportPriority
+                )
+            }
+
+            if (error != null) {
+                _databaseErrorMessage.value = databaseErrorMessageRes(error)
+            }
+        }
     }
 
     fun updateTrafficReport(report: TrafficReportModel) {
-        trafficReportRepository.updateTrafficReport(
-            reportId = report.id,
-            userId = report.userId,
-            reportTitle = report.reportTitle,
-            reportType = report.reportType,
-            reportDescription = report.reportDescription,
-            reportPriority = report.reportPriority,
-            createdAt = report.createdAt,
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            trafficReportRepository.updateTrafficReport(
+                reportId = report.id,
+                userId = report.userId,
+                reportTitle = report.reportTitle,
+                reportType = report.reportType,
+                reportDescription = report.reportDescription,
+                reportPriority = report.reportPriority,
+                createdAt = report.createdAt,
+            )
+        }
     }
 
     fun deleteTrafficReport(reportId: String) {
-        trafficReportRepository.deleteTrafficReport(reportId)
+        viewModelScope.launch {
+            val error = withContext(Dispatchers.IO) {
+                trafficReportRepository.deleteTrafficReport(reportId)
+            }
+
+            if (error != null) {
+                _databaseErrorMessage.value = databaseErrorMessageRes(error)
+            }
+        }
+    }
+
+    fun clearDatabaseErrorMessage() {
+        _databaseErrorMessage.value = null
+    }
+
+    @StringRes
+    private fun databaseErrorMessageRes(error: DatabaseError?): Int {
+        return when (error?.code) {
+            DatabaseError.PERMISSION_DENIED -> R.string.database_error_permission_denied
+            DatabaseError.DISCONNECTED,
+            DatabaseError.NETWORK_ERROR,
+            DatabaseError.UNAVAILABLE -> R.string.database_error_network
+            else -> R.string.database_error_generic
+        }
     }
 }
