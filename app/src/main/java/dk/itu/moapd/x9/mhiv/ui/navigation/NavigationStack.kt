@@ -135,7 +135,9 @@ fun NavigationStack(
                                 reportTitle = title,
                                 reportType = type,
                                 reportDescription = description,
-                                reportPriority = priority
+                                reportPriority = priority,
+                                latitude = location?.latitude ?: 0.0,
+                                longitude = location?.longitude ?: 0.0
                             )
 
                             reportCreated = true

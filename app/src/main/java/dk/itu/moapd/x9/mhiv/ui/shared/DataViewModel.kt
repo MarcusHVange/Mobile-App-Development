@@ -86,6 +86,8 @@ class DataViewModel(
         reportType: String,
         reportDescription: String,
         reportPriority: String,
+        latitude: Double,
+        longitude: Double,
     ) {
         viewModelScope.launch {
             val error = withContext(Dispatchers.IO) {
@@ -93,7 +95,9 @@ class DataViewModel(
                     reportTitle = reportTitle,
                     reportType = reportType,
                     reportDescription = reportDescription,
-                    reportPriority = reportPriority
+                    reportPriority = reportPriority,
+                    latitude = latitude,
+                    longitude = longitude
                 )
             }
 
@@ -112,6 +116,8 @@ class DataViewModel(
                 reportType = report.reportType,
                 reportDescription = report.reportDescription,
                 reportPriority = report.reportPriority,
+                latitude = report.latitude,
+                longitude = report.longitude,
                 createdAt = report.createdAt,
             )
         }
