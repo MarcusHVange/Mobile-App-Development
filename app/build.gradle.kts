@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.ui.database)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.google.play.services.location)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
