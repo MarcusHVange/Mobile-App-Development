@@ -18,6 +18,7 @@ google-services = "4.4.4"
 firebase-bom = "34.11.0"
 firebase-ui-auth = "9.1.1"
 play-services-location = "21.3.0"
+secrets-gradle = "2.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,3 +41,4 @@ google-play-services-location = { group = "com.google.android.gms", name = "play
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-services = { id="com.google.gms.google-services", version.ref = "google-services" }
+secrets-gradle = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets-gradle" }
