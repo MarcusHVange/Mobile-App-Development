@@ -23,6 +23,7 @@ import dk.itu.moapd.x9.mhiv.ui.composables.BottomNavigationBar
 import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
 import dk.itu.moapd.x9.mhiv.ui.composables.MapsScreen
 import dk.itu.moapd.x9.mhiv.ui.composables.TrafficReportScreen
+import dk.itu.moapd.x9.mhiv.ui.main.LocationWrapper
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
 import dk.itu.moapd.x9.mhiv.ui.shared.SessionViewModel
 
@@ -114,20 +115,24 @@ fun NavigationStack(
                     }
                 }
 
-                TrafficReportScreen(
-                    onBack = { navController.navigateUp() },
-                    onSubmit = { title, type, description, priority ->
-                        dataViewModel.insertTrafficReport(
-                            reportTitle = title,
-                            reportType = type,
-                            reportDescription = description,
-                            reportPriority = priority
-                        )
+                LocationWrapper(
+                    onBack = { navController.navigateUp() }
+                ) {
+                    TrafficReportScreen(
+                        onBack = { navController.navigateUp() },
+                        onSubmit = { title, type, description, priority ->
+                            dataViewModel.insertTrafficReport(
+                                reportTitle = title,
+                                reportType = type,
+                                reportDescription = description,
+                                reportPriority = priority
+                            )
 
-                        reportCreated = true
-                        navController.navigateUp()
-                    }
-                )
+                            reportCreated = true
+                            navController.navigateUp()
+                        }
+                    )
+                }
             }
         }
     }
