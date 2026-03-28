@@ -36,7 +36,6 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
         compose = true
     }
 }
@@ -46,11 +45,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.recyclerview)
 
     val composeBom = platform("androidx.compose:compose-bom:2024.09.02")
     implementation(composeBom)
