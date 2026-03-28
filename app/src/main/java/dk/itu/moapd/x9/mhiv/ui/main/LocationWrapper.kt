@@ -2,7 +2,9 @@ package dk.itu.moapd.x9.mhiv.ui.main
 
 import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -16,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,37 +35,68 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import dk.itu.moapd.x9.mhiv.R
+import dk.itu.moapd.x9.mhiv.ui.state.rememberTrackingEnabledState
 
 @Composable
 fun LocationWrapper(
     onBack: () -> Unit,
-    content: @Composable () -> Unit
+    sharedPreferences: SharedPreferences,
+    onStartTracking: () -> Unit,
+    onStopTracking: () -> Unit,
+    onCollectLocations: (onLocation: (Location) -> Unit) -> Unit,
+    content: @Composable (Location?) -> Unit
 ) {
     val context = LocalContext.current
+    val trackingEnabled = rememberTrackingEnabledState(sharedPreferences, context)
+
     var hasLocationPermission by remember {
         mutableStateOf(hasLocationPermission(context))
     }
 
+    var location by remember {
+        mutableStateOf<Location?>(null)
+    }
+
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
+        contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasLocationPermission = granted
+        if (granted) {
+            onStartTracking()
+        }
     }
 
     LaunchedEffect(Unit) {
-        if (!hasLocationPermission) {
-            requestOrShowContent(
-                context = context,
-                onHasPermission = { hasLocationPermission = true },
-                onRequestPermission = {
-                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        requestOrStartTracking(
+            context = context,
+            onHasPermission = {
+                hasLocationPermission = true
+                if (!trackingEnabled.value) {
+                    onStartTracking()
                 }
-            )
+            },
+            onRequestPermission = {
+                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        )
+    }
+
+    LaunchedEffect(trackingEnabled.value) {
+        if (trackingEnabled.value) {
+            onCollectLocations { currentLocation ->
+                location = currentLocation
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            onStopTracking()
         }
     }
 
     if (hasLocationPermission) {
-        content()
+        content(location)
     } else {
         LocationPermissionDeniedScreen(
             onBack = onBack
@@ -70,7 +104,7 @@ fun LocationWrapper(
     }
 }
 
-private fun requestOrShowContent(
+private fun requestOrStartTracking(
     context: Context,
     onHasPermission: () -> Unit,
     onRequestPermission: () -> Unit

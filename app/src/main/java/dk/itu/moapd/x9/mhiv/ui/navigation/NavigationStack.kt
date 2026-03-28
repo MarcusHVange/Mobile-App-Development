@@ -1,5 +1,7 @@
 package dk.itu.moapd.x9.mhiv.ui.navigation
 
+import android.content.SharedPreferences
+import android.location.Location
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -31,7 +33,11 @@ import dk.itu.moapd.x9.mhiv.ui.shared.SessionViewModel
 fun NavigationStack(
     dataViewModel: DataViewModel,
     sessionViewModel: SessionViewModel,
-    onStartLoginActivity: (Boolean) -> Unit
+    onStartLoginActivity: (Boolean) -> Unit,
+    sharedPreferences: SharedPreferences,
+    onStartTracking: () -> Unit,
+    onStopTracking: () -> Unit,
+    onCollectLocations: (onLocation: (Location) -> Unit) -> Unit,
 ) {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -116,8 +122,12 @@ fun NavigationStack(
                 }
 
                 LocationWrapper(
-                    onBack = { navController.navigateUp() }
-                ) {
+                    onBack = { navController.navigateUp() },
+                    sharedPreferences=sharedPreferences,
+                    onStartTracking=onStartTracking,
+                    onStopTracking=onStopTracking,
+                    onCollectLocations=onCollectLocations
+                ) { location ->
                     TrafficReportScreen(
                         onBack = { navController.navigateUp() },
                         onSubmit = { title, type, description, priority ->
