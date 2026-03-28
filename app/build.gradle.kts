@@ -63,6 +63,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.navigation:navigation-compose:2.9.7")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
