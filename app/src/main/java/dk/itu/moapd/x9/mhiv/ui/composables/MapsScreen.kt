@@ -10,6 +10,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 
@@ -26,7 +28,13 @@ fun MapsScreen(
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(
+            isMyLocationEnabled = true
+        ),
+        uiSettings = MapUiSettings(
+            myLocationButtonEnabled = true
+        )
     ) {
         reports.forEach { report ->
             key(report.id) {
