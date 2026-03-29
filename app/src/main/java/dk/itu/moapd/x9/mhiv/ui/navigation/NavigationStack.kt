@@ -43,6 +43,10 @@ fun NavigationStack(
     val context = LocalContext.current
     var reportCreated by rememberSaveable { mutableStateOf(false) }
 
+    val uiState by dataViewModel.uiState.collectAsStateWithLifecycle()
+    val isLoggedIn by sessionViewModel.isLoggedIn.observeAsState(false)
+    val databaseErrorMessage by dataViewModel.databaseErrorMessage.observeAsState()
+
     val screensWithBottomNav = listOf(Screen.Main.route, Screen.Maps.route)
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
@@ -65,10 +69,6 @@ fun NavigationStack(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = Screen.Main.route) {
-                val uiState by dataViewModel.uiState.collectAsStateWithLifecycle()
-                val isLoggedIn by sessionViewModel.isLoggedIn.observeAsState(false)
-                val databaseErrorMessage by dataViewModel.databaseErrorMessage.observeAsState()
-
                 LaunchedEffect(reportCreated) {
                     if (reportCreated) {
                         Toast.makeText(
@@ -111,7 +111,18 @@ fun NavigationStack(
             }
 
             composable(route = Screen.Maps.route) {
-                MapsScreen()
+                LocationWrapper(
+                    onBack = { navController.navigateUp() },
+                    sharedPreferences=sharedPreferences,
+                    onStartTracking=onStartTracking,
+                    onStopTracking=onStopTracking,
+                    onCollectLocations=onCollectLocations
+                ) { location ->
+                    MapsScreen(
+                        uiState.reports,
+                        location
+                    )
+                }
             }
 
             composable(route = Screen.TrafficReport.route) {
@@ -136,8 +147,8 @@ fun NavigationStack(
                                 reportType = type,
                                 reportDescription = description,
                                 reportPriority = priority,
-                                latitude = location?.latitude ?: 0.0,
-                                longitude = location?.longitude ?: 0.0
+                                latitude = location.latitude,
+                                longitude = location.longitude
                             )
 
                             reportCreated = true

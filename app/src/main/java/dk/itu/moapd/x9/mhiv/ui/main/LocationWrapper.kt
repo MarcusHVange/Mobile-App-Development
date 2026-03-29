@@ -44,7 +44,7 @@ fun LocationWrapper(
     onStartTracking: () -> Unit,
     onStopTracking: () -> Unit,
     onCollectLocations: (onLocation: (Location) -> Unit) -> Unit,
-    content: @Composable (Location?) -> Unit
+    content: @Composable (Location) -> Unit
 ) {
     val context = LocalContext.current
     val trackingEnabled = rememberTrackingEnabledState(sharedPreferences, context)
@@ -95,12 +95,20 @@ fun LocationWrapper(
         }
     }
 
-    if (hasLocationPermission) {
-        content(location)
-    } else {
-        LocationPermissionDeniedScreen(
-            onBack = onBack
-        )
+    when {
+        !hasLocationPermission -> {
+            LocationPermissionDeniedScreen(
+                onBack = onBack
+            )
+        }
+
+        location == null -> {
+            Text("Fetching your location...")
+        }
+
+        else -> {
+            content(location!!)
+        }
     }
 }
 
