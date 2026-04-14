@@ -1,23 +1,27 @@
 package dk.itu.moapd.x9.mhiv.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.core.preferences.LocationTrackingPreferences
 import dk.itu.moapd.x9.mhiv.ui.main.MainActivity
@@ -208,6 +212,20 @@ class LocationService : Service() {
     fun subscribeToLocationUpdates() {
         LocationTrackingPreferences.setTrackingEnabled(this, true)
 
+        val hasFineLocation = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasCoarseLocation = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!hasFineLocation && !hasCoarseLocation) {
+            LocationTrackingPreferences.setTrackingEnabled(this, false)
+            return
+        }
+
         val locationRequest = LocationRequest
             .Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, LOCATION_UPDATE_INTERVAL_MS)
             .setMinUpdateIntervalMillis(MIN_UPDATE_INTERVAL_MS)
@@ -216,6 +234,13 @@ class LocationService : Service() {
             .build()
 
         try {
+            fusedLocationProviderClient
+                .getCurrentLocation(
+                    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                    CancellationTokenSource().token
+                )
+                .addOnSuccessListener { it?.let(_locationUpdates::tryEmit) }
+
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
                 locationCallback,
