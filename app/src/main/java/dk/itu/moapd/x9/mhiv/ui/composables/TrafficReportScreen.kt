@@ -1,5 +1,11 @@
 package dk.itu.moapd.x9.mhiv.ui.composables
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -39,14 +47,18 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import dk.itu.moapd.x9.mhiv.R
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrafficReportScreen(
     onBack: () -> Unit,
-    onSubmit: (String, String, String, String) -> Unit
+    openCameraOnStart: Boolean = false,
+    onSubmit: (String, String, String, String, Uri?) -> Unit
 ) {
+    val context = LocalContext.current
     val screenBackground = colorResource(R.color.background_light)
     val fieldBackground = colorResource(R.color.white)
     val fieldSpacing = dimensionResource(R.dimen.form_report_margin_bottom)
@@ -58,6 +70,11 @@ fun TrafficReportScreen(
     val descriptionRequiredError = stringResource(R.string.form_report_description_error_required)
     val priorityRequiredError = stringResource(R.string.form_report_priority_error_required)
     val priorityInvalidError = stringResource(R.string.form_report_priority_error_invalid)
+    val openingCameraMessage = stringResource(R.string.opening_camera)
+    val photoCaptureSuccess = stringResource(R.string.photo_capture_success)
+    val photoCaptureCancelled = stringResource(R.string.photo_capture_cancelled)
+    val photoCaptureUnavailable = stringResource(R.string.photo_capture_unavailable)
+    val photoCaptureError = stringResource(R.string.photo_capture_error)
 
     var title by rememberSaveable { mutableStateOf("") }
     var type by rememberSaveable { mutableStateOf("") }
@@ -69,10 +86,57 @@ fun TrafficReportScreen(
     var priorityError by rememberSaveable { mutableStateOf<String?>(null) }
     var isTypeMenuExpanded by remember { mutableStateOf(false) }
 
+    var isOpeningCamera by rememberSaveable { mutableStateOf(openCameraOnStart) }
+    var cameraLaunched by rememberSaveable { mutableStateOf(false) }
+    var pendingPhotoUri by rememberSaveable { mutableStateOf<String?>(null) }
+    var capturedPhotoUri by rememberSaveable { mutableStateOf<String?>(null) }
+    var photoMessage by rememberSaveable { mutableStateOf<String?>(null) }
+
     val titleFocusRequester = remember { FocusRequester() }
     val typeFocusRequester = remember { FocusRequester() }
     val descriptionFocusRequester = remember { FocusRequester() }
     val priorityFocusRequester = remember { FocusRequester() }
+
+    val takePhotoLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { didTakePhoto ->
+        isOpeningCamera = false
+        if (didTakePhoto) {
+            capturedPhotoUri = pendingPhotoUri
+            photoMessage = photoCaptureSuccess
+        } else {
+            pendingPhotoUri = null
+            photoMessage = photoCaptureCancelled
+        }
+    }
+
+    LaunchedEffect(openCameraOnStart) {
+        if (!openCameraOnStart || cameraLaunched) return@LaunchedEffect
+
+        cameraLaunched = true
+
+        if (!canTakePhoto(context)) {
+            isOpeningCamera = false
+            photoMessage = photoCaptureUnavailable
+            return@LaunchedEffect
+        }
+
+        val photoUri = runCatching {
+            createTrafficReportPhotoUri(context)
+        }.getOrElse {
+            isOpeningCamera = false
+            photoMessage = photoCaptureError
+            return@LaunchedEffect
+        }
+
+        pendingPhotoUri = photoUri.toString()
+        runCatching {
+            takePhotoLauncher.launch(photoUri)
+        }.onFailure {
+            isOpeningCamera = false
+            photoMessage = photoCaptureError
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -91,6 +155,14 @@ fun TrafficReportScreen(
             )
         }
 
+        if (isOpeningCamera) {
+            Text(
+                text = openingCameraMessage,
+                modifier = Modifier.padding(16.dp)
+            )
+            return@Column
+        }
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -107,6 +179,13 @@ fun TrafficReportScreen(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
+
+            photoMessage?.let { message ->
+                Text(
+                    text = message,
+                    modifier = Modifier.padding(bottom = fieldSpacing)
+                )
+            }
 
             Text(
                 text = stringResource(R.string.form_report_title),
@@ -247,7 +326,8 @@ fun TrafficReportScreen(
                             trimmedTitle,
                             trimmedType,
                             trimmedDescription,
-                            trimmedPriority
+                            trimmedPriority,
+                            capturedPhotoUri?.let(Uri::parse)
                         )
                     }
                 },
@@ -265,3 +345,23 @@ private fun trafficReportTextFieldColors(containerColor: Color) = OutlinedTextFi
     unfocusedContainerColor = containerColor,
     errorContainerColor = containerColor
 )
+
+private fun canTakePhoto(context: Context): Boolean {
+    val captureImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    return captureImageIntent.resolveActivity(context.packageManager) != null
+}
+
+private fun createTrafficReportPhotoUri(context: Context): Uri {
+    val photoDirectory = File(context.filesDir, TRAFFIC_REPORT_PHOTOS_DIRECTORY).apply {
+        mkdirs()
+    }
+    val photoFile = File(photoDirectory, "traffic_report_${System.currentTimeMillis()}.jpg")
+
+    return FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        photoFile
+    )
+}
+
+private const val TRAFFIC_REPORT_PHOTOS_DIRECTORY = "traffic_report_photos"

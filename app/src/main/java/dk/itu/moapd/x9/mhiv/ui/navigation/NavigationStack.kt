@@ -141,7 +141,8 @@ fun NavigationStack(
                 ) { location ->
                     TrafficReportScreen(
                         onBack = { navController.navigateUp() },
-                        onSubmit = { title, type, description, priority ->
+                        openCameraOnStart = true,
+                        onSubmit = { title, type, description, priority, photoUri ->
                             dataViewModel.insertTrafficReport(
                                 reportTitle = title,
                                 reportType = type,

@@ -41,6 +41,11 @@
     <string name="report_description_label">Description</string>
     <string name="report_field_label">%1$s: </string>
     <string name="report_created_message">Report created</string>
+    <string name="opening_camera">Opening camera...</string>
+    <string name="photo_capture_success">Photo captured and ready for upload.</string>
+    <string name="photo_capture_cancelled">No photo was captured.</string>
+    <string name="photo_capture_unavailable">No camera app is available on this device.</string>
+    <string name="photo_capture_error">Could not prepare the camera.</string>
     <string name="location_permission_required_message">Location access needs to be enabled for this feature</string>
     <string name="preference_file_key">dk.itu.moapd.x9.mhiv.PREFERENCE_FILE_KEY</string>
     <string name="notification_channel_name">Location Tracking</string>
