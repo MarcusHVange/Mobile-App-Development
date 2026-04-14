@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.shared
 
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -88,6 +89,7 @@ class DataViewModel(
         reportPriority: String,
         latitude: Double,
         longitude: Double,
+        photoUri: Uri?,
     ) {
         viewModelScope.launch {
             val error = withContext(Dispatchers.IO) {
@@ -97,7 +99,8 @@ class DataViewModel(
                     reportDescription = reportDescription,
                     reportPriority = reportPriority,
                     latitude = latitude,
-                    longitude = longitude
+                    longitude = longitude,
+                    photoUri = photoUri
                 )
             }
 

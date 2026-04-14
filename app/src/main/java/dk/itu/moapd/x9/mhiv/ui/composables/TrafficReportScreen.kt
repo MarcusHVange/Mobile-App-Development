@@ -322,13 +322,17 @@ fun TrafficReportScreen(
                             priorityFocusRequester.requestFocus()
                         }
 
-                        else -> onSubmit(
-                            trimmedTitle,
-                            trimmedType,
-                            trimmedDescription,
-                            trimmedPriority,
-                            capturedPhotoUri?.let(Uri::parse)
-                        )
+                        else -> {
+                            val photoUri = capturedPhotoUri?.let(Uri::parse)
+
+                            onSubmit(
+                                trimmedTitle,
+                                trimmedType,
+                                trimmedDescription,
+                                trimmedPriority,
+                                photoUri
+                            )
+                        }
                     }
                 },
                 modifier = Modifier.padding(top = 4.dp)

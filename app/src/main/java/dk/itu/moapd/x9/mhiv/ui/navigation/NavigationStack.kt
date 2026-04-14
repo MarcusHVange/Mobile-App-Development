@@ -149,7 +149,8 @@ fun NavigationStack(
                                 reportDescription = description,
                                 reportPriority = priority,
                                 latitude = location.latitude,
-                                longitude = location.longitude
+                                longitude = location.longitude,
+                                photoUri = photoUri
                             )
 
                             reportCreated = true

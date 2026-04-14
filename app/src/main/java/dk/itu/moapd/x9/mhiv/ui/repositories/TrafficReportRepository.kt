@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.repositories
 
+import android.net.Uri
 import androidx.annotation.WorkerThread
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -7,6 +8,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.Query
 import com.google.firebase.database.database
+import com.google.firebase.storage.storage
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -19,6 +21,7 @@ class TrafficReportRepository(
 ) {
     companion object {
         private const val PATH_TRAFFIC_REPORTS = "trafficReports"
+        private const val PATH_TRAFFIC_REPORT_PHOTOS = "traffic_report_photos"
         private const val CHILD_CREATED_AT = "createdAt"
     }
 
@@ -36,6 +39,7 @@ class TrafficReportRepository(
         reportPriority: String,
         latitude: Double,
         longitude: Double,
+        photoUri: Uri?,
         now: Long = System.currentTimeMillis()
     ): DatabaseError? {
         val userId = getCurrentUserId() ?: return null
@@ -57,10 +61,16 @@ class TrafficReportRepository(
             updatedAt = now
         )
 
-        return root
+        val error = root
             .child(PATH_TRAFFIC_REPORTS)
             .child(key)
             .awaitSetValue(report)
+
+        if (error == null) {
+            photoUri?.let { uploadTrafficReportPhoto(it, key) }
+        }
+
+        return error
     }
 
     @WorkerThread
@@ -97,10 +107,16 @@ class TrafficReportRepository(
 
     @WorkerThread
     suspend fun deleteTrafficReport(reportId: String): DatabaseError? {
-        return root
+        val error = root
             .child(PATH_TRAFFIC_REPORTS)
             .child(reportId)
             .awaitRemoveValue()
+
+        if (error == null) {
+            deleteTrafficReportPhoto(reportId)
+        }
+
+        return error
     }
 
     private suspend fun DatabaseReference.awaitSetValue(value: Any): DatabaseError? =
@@ -120,4 +136,16 @@ class TrafficReportRepository(
                 }
             }
         }
+
+    private fun uploadTrafficReportPhoto(photoUri: Uri, reportId: String) {
+        Firebase.storage.reference
+            .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")
+            .putFile(photoUri)
+    }
+
+    private fun deleteTrafficReportPhoto(reportId: String) {
+        Firebase.storage.reference
+            .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")
+            .delete()
+    }
 }
