@@ -23,6 +23,7 @@ import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.ui.composables.BottomNavigationBar
 import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
 import dk.itu.moapd.x9.mhiv.ui.composables.MapsScreen
+import dk.itu.moapd.x9.mhiv.ui.composables.TrafficReportDetails
 import dk.itu.moapd.x9.mhiv.ui.composables.TrafficReportScreen
 import dk.itu.moapd.x9.mhiv.ui.main.LocationWrapper
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
@@ -97,6 +98,9 @@ fun NavigationStack(
                     onAddReportNavigate = {
                         navController.navigate(Screen.TrafficReport.route)
                     },
+                    onReportClick = { report ->
+                        navController.navigate(Screen.TrafficReportDetails.createRoute(report.id))
+                    },
                     onDelete = dataViewModel::deleteTrafficReport,
                     authAction = { loggedIn ->
                         if (loggedIn) {
@@ -106,6 +110,18 @@ fun NavigationStack(
                         }
                     }
                 )
+            }
+
+            composable(route = Screen.TrafficReportDetails.route) { backStackEntry ->
+                val reportId = backStackEntry.arguments?.getString("reportId")
+                val report = uiState.reports.firstOrNull { it.id == reportId }
+
+                report?.let {
+                    TrafficReportDetails(
+                        report = it,
+                        onBack = { navController.navigateUp() }
+                    )
+                }
             }
 
             composable(route = Screen.Maps.route) {

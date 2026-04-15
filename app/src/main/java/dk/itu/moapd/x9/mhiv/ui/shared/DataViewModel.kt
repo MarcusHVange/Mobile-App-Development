@@ -119,6 +119,7 @@ class DataViewModel(
                 reportType = report.reportType,
                 reportDescription = report.reportDescription,
                 reportPriority = report.reportPriority,
+                photoUri = report.photoUri,
                 latitude = report.latitude,
                 longitude = report.longitude,
                 createdAt = report.createdAt,

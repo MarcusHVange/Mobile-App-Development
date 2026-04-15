@@ -14,6 +14,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 const val DATABASEURL = "https://moapd-2026-fce63-default-rtdb.europe-west1.firebasedatabase.app/"
+const val STORAGEBUCKETURL = "gs://moapd-2026-fce63.firebasestorage.app"
 
 class TrafficReportRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
@@ -47,6 +48,7 @@ class TrafficReportRepository(
             .child(PATH_TRAFFIC_REPORTS)
             .push()
             .key ?: return null
+        val photoPath = photoUri?.let { "$PATH_TRAFFIC_REPORT_PHOTOS/$key.jpg" }.orEmpty()
 
         val report = TrafficReportModel(
             id = key,
@@ -55,6 +57,7 @@ class TrafficReportRepository(
             reportType = reportType,
             reportDescription = reportDescription,
             reportPriority = reportPriority,
+            photoUri = photoPath,
             latitude = latitude,
             longitude = longitude,
             createdAt = now,
@@ -81,6 +84,7 @@ class TrafficReportRepository(
         reportType: String,
         reportDescription: String,
         reportPriority: String,
+        photoUri: String,
         latitude: Double,
         longitude: Double,
         createdAt: Long,
@@ -93,6 +97,7 @@ class TrafficReportRepository(
             reportType = reportType,
             reportDescription = reportDescription,
             reportPriority = reportPriority,
+            photoUri = photoUri,
             latitude = latitude,
             longitude = longitude,
             createdAt = createdAt,
@@ -138,13 +143,13 @@ class TrafficReportRepository(
         }
 
     private fun uploadTrafficReportPhoto(photoUri: Uri, reportId: String) {
-        Firebase.storage.reference
+        Firebase.storage(STORAGEBUCKETURL).reference
             .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")
             .putFile(photoUri)
     }
 
     private fun deleteTrafficReportPhoto(reportId: String) {
-        Firebase.storage.reference
+        Firebase.storage(STORAGEBUCKETURL).reference
             .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")
             .delete()
     }

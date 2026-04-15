@@ -37,6 +37,7 @@ fun MainScreen(
     userId: String?,
     isLoggedIn: Boolean,
     onAddReportNavigate: () -> Unit,
+    onReportClick: (TrafficReportModel) -> Unit,
     onDelete: (String) -> Unit,
     authAction: (Boolean) -> Unit
 ) {
@@ -119,6 +120,7 @@ fun MainScreen(
                     reportData = report,
                     isLoggedIn = isLoggedIn,
                     isReportOwnedByUser = report.userId == userId,
+                    onClick = { onReportClick(report) },
                     onDelete = { onDelete(report.id) }
                 )
             }
