@@ -1,6 +1,5 @@
 package dk.itu.moapd.x9.mhiv.ui.navigation
 
-import android.content.SharedPreferences
 import android.location.Location
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
@@ -34,7 +33,6 @@ fun NavigationStack(
     dataViewModel: DataViewModel,
     sessionViewModel: SessionViewModel,
     onStartLoginActivity: (Boolean) -> Unit,
-    sharedPreferences: SharedPreferences,
     onStartTracking: () -> Unit,
     onStopTracking: () -> Unit,
     onCollectLocations: (onLocation: (Location) -> Unit) -> Unit,
@@ -113,7 +111,6 @@ fun NavigationStack(
             composable(route = Screen.Maps.route) {
                 LocationWrapper(
                     onBack = { navController.navigateUp() },
-                    sharedPreferences=sharedPreferences,
                     onStartTracking=onStartTracking,
                     onStopTracking=onStopTracking,
                     onCollectLocations=onCollectLocations
@@ -134,7 +131,6 @@ fun NavigationStack(
 
                 LocationWrapper(
                     onBack = { navController.navigateUp() },
-                    sharedPreferences=sharedPreferences,
                     onStartTracking=onStartTracking,
                     onStopTracking=onStopTracking,
                     onCollectLocations=onCollectLocations

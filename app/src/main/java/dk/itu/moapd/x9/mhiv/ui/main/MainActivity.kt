@@ -106,7 +106,6 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                         dataViewModel = dataViewModel,
                         sessionViewModel = sessionViewModel,
                         onStartLoginActivity = ::startLoginActivity,
-                        sharedPreferences = sharedPreferences,
                         onStartTracking = {
                             pendingStartTracking = true
                             startLocationService()

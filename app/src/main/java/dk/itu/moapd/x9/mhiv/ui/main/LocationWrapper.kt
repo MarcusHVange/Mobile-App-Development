@@ -2,7 +2,6 @@ package dk.itu.moapd.x9.mhiv.ui.main
 
 import android.Manifest
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,19 +34,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import dk.itu.moapd.x9.mhiv.R
-import dk.itu.moapd.x9.mhiv.ui.state.rememberTrackingEnabledState
+import kotlinx.coroutines.delay
+
+private const val LOCATION_FETCH_TIMEOUT_MS = 15_000L
 
 @Composable
 fun LocationWrapper(
     onBack: () -> Unit,
-    sharedPreferences: SharedPreferences,
     onStartTracking: () -> Unit,
     onStopTracking: () -> Unit,
     onCollectLocations: (onLocation: (Location) -> Unit) -> Unit,
     content: @Composable (Location) -> Unit
 ) {
     val context = LocalContext.current
-    val trackingEnabled = rememberTrackingEnabledState(sharedPreferences, context)
 
     var hasLocationPermission by remember {
         mutableStateOf(hasLocationPermission(context))
@@ -56,12 +55,16 @@ fun LocationWrapper(
     var location by remember {
         mutableStateOf<Location?>(null)
     }
+    var locationTimedOut by remember {
+        mutableStateOf(false)
+    }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasLocationPermission = granted
         if (granted) {
+            locationTimedOut = false
             onStartTracking()
         }
     }
@@ -71,9 +74,8 @@ fun LocationWrapper(
             context = context,
             onHasPermission = {
                 hasLocationPermission = true
-                if (!trackingEnabled.value) {
-                    onStartTracking()
-                }
+                locationTimedOut = false
+                onStartTracking()
             },
             onRequestPermission = {
                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -81,10 +83,20 @@ fun LocationWrapper(
         )
     }
 
-    LaunchedEffect(trackingEnabled.value) {
-        if (trackingEnabled.value) {
+    LaunchedEffect(hasLocationPermission) {
+        if (hasLocationPermission) {
             onCollectLocations { currentLocation ->
+                locationTimedOut = false
                 location = currentLocation
+            }
+        }
+    }
+
+    LaunchedEffect(hasLocationPermission, location) {
+        if (hasLocationPermission && location == null) {
+            delay(LOCATION_FETCH_TIMEOUT_MS)
+            if (location == null) {
+                locationTimedOut = true
             }
         }
     }
@@ -100,6 +112,10 @@ fun LocationWrapper(
             LocationPermissionDeniedScreen(
                 onBack = onBack
             )
+        }
+
+        locationTimedOut -> {
+            Text(stringResource(R.string.location_fetch_timeout_message))
         }
 
         location == null -> {

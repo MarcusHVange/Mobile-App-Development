@@ -227,19 +227,26 @@ class LocationService : Service() {
         }
 
         val locationRequest = LocationRequest
-            .Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, LOCATION_UPDATE_INTERVAL_MS)
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, LOCATION_UPDATE_INTERVAL_MS)
             .setMinUpdateIntervalMillis(MIN_UPDATE_INTERVAL_MS)
             .setMaxUpdateDelayMillis(MAX_UPDATE_DELAY_MS)
             .setWaitForAccurateLocation(false)
             .build()
 
         try {
+            fusedLocationProviderClient.lastLocation
+                .addOnSuccessListener { location ->
+                    location?.let(_locationUpdates::tryEmit)
+                }
+
             fusedLocationProviderClient
                 .getCurrentLocation(
-                    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                    Priority.PRIORITY_HIGH_ACCURACY,
                     CancellationTokenSource().token
                 )
-                .addOnSuccessListener { it?.let(_locationUpdates::tryEmit) }
+                .addOnSuccessListener { location ->
+                    location?.let(_locationUpdates::tryEmit)
+                }
 
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
