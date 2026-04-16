@@ -3,8 +3,14 @@ package dk.itu.moapd.x9.mhiv.ui.composables
 import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.google.android.gms.maps.LocationSource
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -21,14 +27,33 @@ fun MapsScreen(
     location: Location
 ) {
     val userLatLng = LatLng(location.latitude, location.longitude)
+    var locationListener by remember {
+        mutableStateOf<LocationSource.OnLocationChangedListener?>(null)
+    }
+    val locationSource = remember {
+        object : LocationSource {
+            override fun activate(listener: LocationSource.OnLocationChangedListener) {
+                locationListener = listener
+            }
+
+            override fun deactivate() {
+                locationListener = null
+            }
+        }
+    }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(userLatLng, 16f)
     }
 
+    LaunchedEffect(locationListener, location) {
+        locationListener?.onLocationChanged(location)
+    }
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
+        locationSource = locationSource,
         properties = MapProperties(
             isMyLocationEnabled = true
         ),
