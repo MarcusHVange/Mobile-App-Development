@@ -156,6 +156,7 @@ fun NavigationStack(
                         openCameraOnStart = true,
                         onSubmit = { title, type, description, priority, photoUri ->
                             dataViewModel.insertTrafficReport(
+                                context = context.applicationContext,
                                 reportTitle = title,
                                 reportType = type,
                                 reportDescription = description,

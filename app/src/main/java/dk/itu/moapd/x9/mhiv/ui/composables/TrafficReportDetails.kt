@@ -86,6 +86,14 @@ fun TrafficReportDetails(
                         .aspectRatio(0.9f)
                 )
 
+                if (report.photoCaption.isNotBlank()) {
+                    Text(
+                        text = stringResource(R.string.report_photo_caption, report.photoCaption),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(fieldSpacing))
             }
 

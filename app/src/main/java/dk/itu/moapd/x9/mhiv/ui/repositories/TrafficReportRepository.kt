@@ -41,6 +41,7 @@ class TrafficReportRepository(
         latitude: Double,
         longitude: Double,
         photoUri: Uri?,
+        photoCaption: String,
         now: Long = System.currentTimeMillis()
     ): DatabaseError? {
         val userId = getCurrentUserId() ?: return null
@@ -58,6 +59,7 @@ class TrafficReportRepository(
             reportDescription = reportDescription,
             reportPriority = reportPriority,
             photoUri = photoPath,
+            photoCaption = photoCaption,
             latitude = latitude,
             longitude = longitude,
             createdAt = now,
@@ -85,6 +87,7 @@ class TrafficReportRepository(
         reportDescription: String,
         reportPriority: String,
         photoUri: String,
+        photoCaption: String,
         latitude: Double,
         longitude: Double,
         createdAt: Long,
@@ -98,6 +101,7 @@ class TrafficReportRepository(
             reportDescription = reportDescription,
             reportPriority = reportPriority,
             photoUri = photoUri,
+            photoCaption = photoCaption,
             latitude = latitude,
             longitude = longitude,
             createdAt = createdAt,

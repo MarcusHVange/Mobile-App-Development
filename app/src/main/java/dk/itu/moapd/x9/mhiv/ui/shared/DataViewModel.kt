@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.shared
 
+import android.content.Context
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
@@ -10,6 +11,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
+import com.google.android.gms.tasks.Tasks
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import dk.itu.moapd.x9.mhiv.ui.repositories.TrafficReportRepository
@@ -83,6 +88,7 @@ class DataViewModel(
     }
 
     fun insertTrafficReport(
+        context: Context,
         reportTitle: String,
         reportType: String,
         reportDescription: String,
@@ -92,6 +98,10 @@ class DataViewModel(
         photoUri: Uri?,
     ) {
         viewModelScope.launch {
+            val photoCaption = photoUri
+                ?.let { createPhotoCaption(context.applicationContext, it) }
+                .orEmpty()
+
             val error = withContext(Dispatchers.IO) {
                 trafficReportRepository.insertTrafficReport(
                     reportTitle = reportTitle,
@@ -100,7 +110,8 @@ class DataViewModel(
                     reportPriority = reportPriority,
                     latitude = latitude,
                     longitude = longitude,
-                    photoUri = photoUri
+                    photoUri = photoUri,
+                    photoCaption = photoCaption
                 )
             }
 
@@ -120,6 +131,7 @@ class DataViewModel(
                 reportDescription = report.reportDescription,
                 reportPriority = report.reportPriority,
                 photoUri = report.photoUri,
+                photoCaption = report.photoCaption,
                 latitude = report.latitude,
                 longitude = report.longitude,
                 createdAt = report.createdAt,
@@ -142,6 +154,17 @@ class DataViewModel(
     fun clearDatabaseErrorMessage() {
         _databaseErrorMessage.value = null
     }
+
+    private suspend fun createPhotoCaption(context: Context, photoUri: Uri): String =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val image = InputImage.fromFilePath(context, photoUri)
+                val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+                val labels = Tasks.await(labeler.process(image))
+
+                labels.maxByOrNull { it.confidence }?.text.orEmpty()
+            }.getOrDefault("")
+        }
 
     @StringRes
     private fun databaseErrorMessageRes(error: DatabaseError?): Int {

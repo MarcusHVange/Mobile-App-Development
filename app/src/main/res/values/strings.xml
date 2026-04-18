@@ -38,6 +38,7 @@
     <string name="add_new">Add new</string>
     <string name="delete_report">Delete report</string>
     <string name="content_description_report_image">Traffic report photo</string>
+    <string name="report_photo_caption">The image contains: %1$s</string>
     <string name="report_image_not_available">Image is not yet available.</string>
     <string name="report_type_label">Type</string>
     <string name="report_description_label">Description</string>
