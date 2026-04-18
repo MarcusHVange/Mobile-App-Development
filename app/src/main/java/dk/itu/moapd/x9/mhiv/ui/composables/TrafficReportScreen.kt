@@ -56,7 +56,7 @@ import java.io.File
 fun TrafficReportScreen(
     onBack: () -> Unit,
     openCameraOnStart: Boolean = false,
-    onSubmit: (String, String, String, String, Uri?, () -> Unit) -> Unit
+    onSubmit: (String, String, String, String, Uri?) -> Unit
 ) {
     val context = LocalContext.current
     val screenBackground = colorResource(R.color.background_light)
@@ -335,9 +335,8 @@ fun TrafficReportScreen(
                                 trimmedDescription,
                                 trimmedPriority,
                                 photoUri
-                            ) {
-                                isSubmitting = false
-                            }
+                            )
+                            isSubmitting = false
                         }
                     }
                 },
