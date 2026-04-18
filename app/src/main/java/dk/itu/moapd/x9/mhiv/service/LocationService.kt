@@ -216,12 +216,8 @@ class LocationService : Service() {
             this,
             Manifest.permission.ACCESS_FINE_LOCATION,
         ) == PackageManager.PERMISSION_GRANTED
-        val hasCoarseLocation = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
 
-        if (!hasFineLocation && !hasCoarseLocation) {
+        if (!hasFineLocation) {
             LocationTrackingPreferences.setTrackingEnabled(this, false)
             return
         }
