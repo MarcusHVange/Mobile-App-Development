@@ -56,7 +56,7 @@ import java.io.File
 fun TrafficReportScreen(
     onBack: () -> Unit,
     openCameraOnStart: Boolean = false,
-    onSubmit: (String, String, String, String, Uri?) -> Unit
+    onSubmit: (String, String, String, String, Uri?, () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
     val screenBackground = colorResource(R.color.background_light)
@@ -75,6 +75,8 @@ fun TrafficReportScreen(
     val photoCaptureCancelled = stringResource(R.string.photo_capture_cancelled)
     val photoCaptureUnavailable = stringResource(R.string.photo_capture_unavailable)
     val photoCaptureError = stringResource(R.string.photo_capture_error)
+    val submitButtonText = stringResource(R.string.submit_btn_text)
+    val submitLoadingText = stringResource(R.string.submit_btn_loading)
 
     var title by rememberSaveable { mutableStateOf("") }
     var type by rememberSaveable { mutableStateOf("") }
@@ -91,6 +93,7 @@ fun TrafficReportScreen(
     var pendingPhotoUri by rememberSaveable { mutableStateOf<String?>(null) }
     var capturedPhotoUri by rememberSaveable { mutableStateOf<String?>(null) }
     var photoMessage by rememberSaveable { mutableStateOf<String?>(null) }
+    var isSubmitting by rememberSaveable { mutableStateOf(false) }
 
     val titleFocusRequester = remember { FocusRequester() }
     val typeFocusRequester = remember { FocusRequester() }
@@ -325,19 +328,23 @@ fun TrafficReportScreen(
                         else -> {
                             val photoUri = capturedPhotoUri?.let(Uri::parse)
 
+                            isSubmitting = true
                             onSubmit(
                                 trimmedTitle,
                                 trimmedType,
                                 trimmedDescription,
                                 trimmedPriority,
                                 photoUri
-                            )
+                            ) {
+                                isSubmitting = false
+                            }
                         }
                     }
                 },
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 4.dp),
+                enabled = !isSubmitting
             ) {
-                Text(stringResource(R.string.submit_btn_text))
+                Text(if (isSubmitting) submitLoadingText else submitButtonText)
             }
         }
     }

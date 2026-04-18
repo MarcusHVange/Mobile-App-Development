@@ -96,6 +96,7 @@ class DataViewModel(
         latitude: Double,
         longitude: Double,
         photoUri: Uri?,
+        onComplete: () -> Unit = {},
     ) {
         viewModelScope.launch {
             val photoCaption = photoUri
@@ -118,6 +119,8 @@ class DataViewModel(
             if (error != null) {
                 _databaseErrorMessage.value = databaseErrorMessageRes(error)
             }
+
+            onComplete()
         }
     }
 
@@ -162,7 +165,9 @@ class DataViewModel(
                 val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
                 val labels = Tasks.await(labeler.process(image))
 
-                labels.maxByOrNull { it.confidence }?.text.orEmpty()
+                labels.sortedByDescending { it.confidence }
+                    .take(PHOTO_CAPTION_LABEL_COUNT)
+                    .joinToString(", ") { it.text }
             }.getOrDefault("")
         }
 
@@ -177,3 +182,5 @@ class DataViewModel(
         }
     }
 }
+
+private const val PHOTO_CAPTION_LABEL_COUNT = 3

@@ -24,6 +24,7 @@
         <item>major</item>
     </string-array>
     <string name="submit_btn_text">Submit</string>
+    <string name="submit_btn_loading">...</string>
     <string name="back_button_content_description">Back</string>
     <string name="login_title">Sign in</string>
     <string name="login_email_button">Email &amp; password</string>
