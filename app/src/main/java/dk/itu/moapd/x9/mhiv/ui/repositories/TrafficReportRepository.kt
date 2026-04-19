@@ -152,6 +152,23 @@ class TrafficReportRepository(
             .putFile(photoUri)
     }
 
+    suspend fun getTrafficReportPhotoUrl(path: String): Uri? =
+        suspendCancellableCoroutine { continuation ->
+            Firebase.storage(STORAGEBUCKETURL).reference
+                .child(path)
+                .downloadUrl
+                .addOnSuccessListener { downloadUrl ->
+                    if (continuation.isActive) {
+                        continuation.resume(downloadUrl)
+                    }
+                }
+                .addOnFailureListener {
+                    if (continuation.isActive) {
+                        continuation.resume(null)
+                    }
+                }
+        }
+
     private fun deleteTrafficReportPhoto(reportId: String) {
         Firebase.storage(STORAGEBUCKETURL).reference
             .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")

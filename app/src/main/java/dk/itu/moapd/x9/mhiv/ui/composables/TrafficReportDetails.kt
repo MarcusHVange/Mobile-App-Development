@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.composables
 
+import android.net.Uri
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.compose.foundation.background
@@ -35,19 +36,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.firebase.Firebase
-import com.google.firebase.storage.storage
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
-import dk.itu.moapd.x9.mhiv.ui.repositories.STORAGEBUCKETURL
 import kotlinx.coroutines.delay
 
 @Composable
 fun TrafficReportDetails(
     report: TrafficReportModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    loadPhotoUrl: suspend (String) -> Uri?
 ) {
     val screenBackground = colorResource(R.color.background_light)
     val contentPadding = dimensionResource(R.dimen.horizontal_padding)
@@ -80,6 +79,7 @@ fun TrafficReportDetails(
             if (report.photoUri.isNotBlank()) {
                 FirebaseStoragePicassoImage(
                     path = report.photoUri,
+                    loadPhotoUrl = loadPhotoUrl,
                     contentDescription = stringResource(R.string.content_description_report_image),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -137,6 +137,7 @@ private fun ReportDetail(
 @Composable
 private fun FirebaseStoragePicassoImage(
     path: String,
+    loadPhotoUrl: suspend (String) -> Uri?,
     contentDescription: String,
     modifier: Modifier = Modifier
 ) {
@@ -151,19 +152,16 @@ private fun FirebaseStoragePicassoImage(
             delay(IMAGE_DOWNLOAD_RETRY_DELAY_MS)
         }
 
-        Firebase.storage(STORAGEBUCKETURL).reference
-            .child(path)
-            .downloadUrl
-            .addOnSuccessListener { downloadUrl ->
-                url = downloadUrl.toString()
-                isImageUnavailable = true
+        val downloadUrl = loadPhotoUrl(path)
+        if (downloadUrl == null) {
+            isImageUnavailable = true
+            if (retryCount < IMAGE_DOWNLOAD_RETRIES) {
+                retryCount += 1
             }
-            .addOnFailureListener {
-                isImageUnavailable = true
-                if (retryCount < IMAGE_DOWNLOAD_RETRIES) {
-                    retryCount += 1
-                }
-            }
+        } else {
+            url = downloadUrl.toString()
+            isImageUnavailable = true
+        }
     }
 
     Box(modifier = modifier) {

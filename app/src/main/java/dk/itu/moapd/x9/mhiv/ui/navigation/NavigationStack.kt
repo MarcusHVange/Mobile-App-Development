@@ -119,7 +119,8 @@ fun NavigationStack(
                 report?.let {
                     TrafficReportDetails(
                         report = it,
-                        onBack = { navController.navigateUp() }
+                        onBack = { navController.navigateUp() },
+                        loadPhotoUrl = dataViewModel::getTrafficReportPhotoUrl
                     )
                 }
             }

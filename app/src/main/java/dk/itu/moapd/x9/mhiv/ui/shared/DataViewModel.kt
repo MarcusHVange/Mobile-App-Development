@@ -158,6 +158,11 @@ class DataViewModel(
         _databaseErrorMessage.value = null
     }
 
+    suspend fun getTrafficReportPhotoUrl(photoPath: String): Uri? =
+        withContext(Dispatchers.IO) {
+            trafficReportRepository.getTrafficReportPhotoUrl(photoPath)
+        }
+
     private suspend fun createPhotoCaption(context: Context, photoUri: Uri): String =
         withContext(Dispatchers.IO) {
             runCatching {
