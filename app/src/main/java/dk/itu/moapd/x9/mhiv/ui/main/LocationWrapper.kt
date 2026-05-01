@@ -119,7 +119,7 @@ fun LocationWrapper(
         }
 
         location == null -> {
-            Text("Fetching your location...")
+            Text(stringResource(R.string.location_fetching_message))
         }
 
         else -> {
