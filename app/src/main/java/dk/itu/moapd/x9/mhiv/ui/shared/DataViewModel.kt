@@ -2,9 +2,6 @@ package dk.itu.moapd.x9.mhiv.ui.shared
 
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.DataSnapshot
@@ -15,7 +12,6 @@ import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
-import dk.itu.moapd.x9.mhiv.R
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 import dk.itu.moapd.x9.mhiv.ui.repositories.TrafficReportRepository
 import kotlinx.coroutines.Dispatchers
@@ -119,24 +115,6 @@ class DataViewModel(
             }.onFailure {
                 onError()
             }
-        }
-    }
-
-    fun updateTrafficReport(report: TrafficReport) {
-        viewModelScope.launch(Dispatchers.IO) {
-            trafficReportRepository.updateTrafficReport(
-                reportId = report.id,
-                userId = report.userId,
-                reportTitle = report.reportTitle,
-                reportType = report.reportType,
-                reportDescription = report.reportDescription,
-                reportPriority = report.reportPriority,
-                photoUri = report.photoUri,
-                photoCaption = report.photoCaption,
-                latitude = report.latitude,
-                longitude = report.longitude,
-                createdAt = report.createdAt,
-            )
         }
     }
 

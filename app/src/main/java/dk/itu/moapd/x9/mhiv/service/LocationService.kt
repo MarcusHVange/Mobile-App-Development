@@ -254,15 +254,4 @@ class LocationService : Service() {
         }
     }
 
-    /**
-     * Unsubscribes this application from location changes.
-     */
-    fun unsubscribeToLocationUpdates() {
-        try {
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            LocationTrackingPreferences.setTrackingEnabled(this, false)
-        } catch (_: SecurityException) {
-            LocationTrackingPreferences.setTrackingEnabled(this, true)
-        }
-    }
 }

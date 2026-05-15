@@ -71,42 +71,6 @@ class TrafficReportRepository(
     }
 
     @WorkerThread
-    suspend fun updateTrafficReport(
-        reportId: String,
-        userId: String,
-        reportTitle: String,
-        reportType: String,
-        reportDescription: String,
-        reportPriority: String,
-        photoUri: String,
-        photoCaption: String,
-        latitude: Double?,
-        longitude: Double?,
-        createdAt: Long,
-        now: Long = System.currentTimeMillis()
-    ): DatabaseError? {
-        val report = TrafficReport(
-            id = reportId,
-            userId = userId,
-            reportTitle = reportTitle,
-            reportType = reportType,
-            reportDescription = reportDescription,
-            reportPriority = reportPriority,
-            photoUri = photoUri,
-            photoCaption = photoCaption,
-            latitude = latitude,
-            longitude = longitude,
-            createdAt = createdAt,
-            updatedAt = now
-        )
-
-        return root
-            .child(PATH_TRAFFIC_REPORTS)
-            .child(reportId)
-            .awaitSetValue(report)
-    }
-
-    @WorkerThread
     suspend fun deleteTrafficReport(reportId: String): DatabaseError? {
         val error = root
             .child(PATH_TRAFFIC_REPORTS)
