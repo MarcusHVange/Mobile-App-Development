@@ -114,11 +114,6 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                                 pendingStartTracking = false
                             }
                         },
-                        onStopTracking = {
-                            pendingStartTracking = false
-                            locationService?.unsubscribeToLocationUpdates()
-                            stopService(Intent(this, LocationService::class.java))
-                        },
                         onCollectLocations = { onLocation ->
                             onLocationCallback = onLocation
                             collectJob?.cancel()

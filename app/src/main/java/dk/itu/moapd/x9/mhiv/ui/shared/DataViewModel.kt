@@ -93,8 +93,8 @@ class DataViewModel(
         reportType: String,
         reportDescription: String,
         reportPriority: String,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         photoUri: Uri?,
         onComplete: () -> Unit = {},
     ) {

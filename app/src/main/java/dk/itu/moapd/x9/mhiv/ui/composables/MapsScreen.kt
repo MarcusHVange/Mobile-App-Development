@@ -24,9 +24,10 @@ import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 @Composable
 fun MapsScreen(
     reports: List<TrafficReportModel>,
-    location: Location
+    location: Location?
 ) {
-    val userLatLng = LatLng(location.latitude, location.longitude)
+    val userLatLng = if (location != null) LatLng(location.latitude, location.longitude) else LatLng(55.6596357, 12.5885189)
+
     var locationListener by remember {
         mutableStateOf<LocationSource.OnLocationChangedListener?>(null)
     }
@@ -47,7 +48,9 @@ fun MapsScreen(
     }
 
     LaunchedEffect(locationListener, location) {
-        locationListener?.onLocationChanged(location)
+        if (location != null) {
+            locationListener?.onLocationChanged(location)
+        }
     }
 
     GoogleMap(
@@ -62,8 +65,12 @@ fun MapsScreen(
         )
     ) {
         reports.forEach { report ->
+            if (report.latitude == null || report.longitude == null) {
+                return@forEach
+            }
+
             key(report.id) {
-                val reportPosition = LatLng(report.latitude, report.longitude)
+                val reportPosition = LatLng(report.latitude!!, report.longitude!!)
 
                 Marker(
                     state = MarkerState(position = reportPosition),

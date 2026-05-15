@@ -9,8 +9,8 @@ data class TrafficReportModel(
     var reportPriority: String = "",
     var photoUri: String = "",
     var photoCaption: String = "",
-    var latitude: Double = 0.0,
-    var longitude: Double = 0.0,
+    var latitude: Double? = null,
+    var longitude: Double? = null,
     var createdAt: Long = 0L,
     var updatedAt: Long = 0L
 )

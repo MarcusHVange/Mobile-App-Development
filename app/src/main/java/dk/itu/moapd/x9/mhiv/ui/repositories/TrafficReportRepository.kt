@@ -38,8 +38,8 @@ class TrafficReportRepository(
         reportType: String,
         reportDescription: String,
         reportPriority: String,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         photoUri: Uri?,
         photoCaption: String,
         now: Long = System.currentTimeMillis()
@@ -88,8 +88,8 @@ class TrafficReportRepository(
         reportPriority: String,
         photoUri: String,
         photoCaption: String,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         createdAt: Long,
         now: Long = System.currentTimeMillis()
     ): DatabaseError? {

@@ -1,7 +1,11 @@
 package dk.itu.moapd.x9.mhiv.ui.navigation
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -9,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -25,7 +30,8 @@ import dk.itu.moapd.x9.mhiv.ui.composables.MainScreen
 import dk.itu.moapd.x9.mhiv.ui.composables.MapsScreen
 import dk.itu.moapd.x9.mhiv.ui.composables.TrafficReportDetails
 import dk.itu.moapd.x9.mhiv.ui.composables.TrafficReportScreen
-import dk.itu.moapd.x9.mhiv.ui.main.LocationWrapper
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.core.content.ContextCompat
 import dk.itu.moapd.x9.mhiv.ui.shared.DataViewModel
 import dk.itu.moapd.x9.mhiv.ui.shared.SessionViewModel
 
@@ -35,7 +41,6 @@ fun NavigationStack(
     sessionViewModel: SessionViewModel,
     onStartLoginActivity: (Boolean) -> Unit,
     onStartTracking: () -> Unit,
-    onStopTracking: () -> Unit,
     onCollectLocations: (onLocation: (Location) -> Unit) -> Unit,
 ) {
     val navController = rememberNavController()
@@ -51,6 +56,29 @@ fun NavigationStack(
     val currentRoute = currentBackStackEntry?.destination?.route
 
     val showBottomBar = currentRoute in screensWithBottomNav
+
+    var location by remember { mutableStateOf<Location?>(null) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) onStartTracking()
+    }
+
+    LaunchedEffect(Unit) {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) onStartTracking() else permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    LaunchedEffect(Unit) {
+        onCollectLocations { currentLocation ->
+            location = currentLocation
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -126,17 +154,7 @@ fun NavigationStack(
             }
 
             composable(route = Screen.Maps.route) {
-                LocationWrapper(
-                    onBack = { navController.navigateUp() },
-                    onStartTracking=onStartTracking,
-                    onStopTracking=onStopTracking,
-                    onCollectLocations=onCollectLocations
-                ) { location ->
-                    MapsScreen(
-                        uiState.reports,
-                        location
-                    )
-                }
+                MapsScreen(uiState.reports, location)
             }
 
             composable(route = Screen.TrafficReport.route) {
@@ -146,31 +164,24 @@ fun NavigationStack(
                     }
                 }
 
-                LocationWrapper(
+                TrafficReportScreen(
                     onBack = { navController.navigateUp() },
-                    onStartTracking=onStartTracking,
-                    onStopTracking=onStopTracking,
-                    onCollectLocations=onCollectLocations
-                ) { location ->
-                    TrafficReportScreen(
-                        onBack = { navController.navigateUp() },
-                        openCameraOnStart = true,
-                        onSubmit = { title, type, description, priority, photoUri ->
-                            dataViewModel.insertTrafficReport(
-                                context = context.applicationContext,
-                                reportTitle = title,
-                                reportType = type,
-                                reportDescription = description,
-                                reportPriority = priority,
-                                latitude = location.latitude,
-                                longitude = location.longitude,
-                                photoUri = photoUri,
-                            )
-                            reportCreated = true
-                            navController.navigateUp()
-                        }
-                    )
-                }
+                    openCameraOnStart = true,
+                    onSubmit = { title, type, description, priority, photoUri ->
+                        dataViewModel.insertTrafficReport(
+                            context = context.applicationContext,
+                            reportTitle = title,
+                            reportType = type,
+                            reportDescription = description,
+                            reportPriority = priority,
+                            latitude = location?.latitude,
+                            longitude = location?.longitude,
+                            photoUri = photoUri,
+                        )
+                        reportCreated = true
+                        navController.navigateUp()
+                    }
+                )
             }
         }
     }
