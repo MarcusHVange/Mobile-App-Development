@@ -9,17 +9,16 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.Query
 import com.google.firebase.database.database
 import com.google.firebase.storage.storage
+import dk.itu.moapd.x9.mhiv.BuildConfig
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 
-const val DATABASEURL = "https://moapd-2026-fce63-default-rtdb.europe-west1.firebasedatabase.app/"
-const val STORAGEBUCKETURL = "gs://moapd-2026-fce63.firebasestorage.app"
 
 class TrafficReportRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private val root: DatabaseReference = Firebase.database(DATABASEURL).reference
+    private val root: DatabaseReference = Firebase.database(BuildConfig.DATABASEURL).reference
 ) {
     companion object {
         private const val PATH_TRAFFIC_REPORTS = "trafficReports"
@@ -142,7 +141,7 @@ class TrafficReportRepository(
     private suspend fun uploadTrafficReportPhoto(photoUri: Uri, reportId: String): String {
         val photoPath = photoUri.let { uri ->
             val path = "$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg"
-            Firebase.storage(STORAGEBUCKETURL).reference
+            Firebase.storage(BuildConfig.STORAGEBUCKETURL).reference
                 .child(path)
                 .putFile(uri)
                 .await()
@@ -154,7 +153,7 @@ class TrafficReportRepository(
 
     suspend fun getTrafficReportPhotoUrl(path: String): Uri? =
         suspendCancellableCoroutine { continuation ->
-            Firebase.storage(STORAGEBUCKETURL).reference
+            Firebase.storage(BuildConfig.STORAGEBUCKETURL).reference
                 .child(path)
                 .downloadUrl
                 .addOnSuccessListener { downloadUrl ->
@@ -170,7 +169,7 @@ class TrafficReportRepository(
         }
 
     private fun deleteTrafficReportPhoto(reportId: String) {
-        Firebase.storage(STORAGEBUCKETURL).reference
+        Firebase.storage(BuildConfig.STORAGEBUCKETURL).reference
             .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")
             .delete()
     }
