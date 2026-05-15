@@ -23,6 +23,12 @@
         <item>moderate</item>
         <item>major</item>
     </string-array>
+    <string name="form_report_latitude">Report latitude (optional)</string>
+    <string name="form_report_latitude_hint">55.6596357</string>
+    <string name="form_report_latitude_error_invalid">Latitude must be a decimal number</string>
+    <string name="form_report_longitude">Report longitude (optional)</string>
+    <string name="form_report_longitude_hint">12.5885189</string>
+    <string name="form_report_longitude_error_invalid">Longitude must be a decimal number</string>
     <string name="submit_btn_text">Submit</string>
     <string name="submit_btn_loading">...</string>
     <string name="back_button_content_description">Back</string>

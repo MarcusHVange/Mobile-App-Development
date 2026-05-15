@@ -56,7 +56,7 @@ import java.io.File
 fun TrafficReportScreen(
     onBack: () -> Unit,
     openCameraOnStart: Boolean = false,
-    onSubmit: (String, String, String, String, Uri?) -> Unit
+    onSubmit: (String, String, String, String, Double?, Double?, Uri?) -> Unit
 ) {
     val context = LocalContext.current
     val screenBackground = colorResource(R.color.background_light)
@@ -70,6 +70,8 @@ fun TrafficReportScreen(
     val descriptionRequiredError = stringResource(R.string.form_report_description_error_required)
     val priorityRequiredError = stringResource(R.string.form_report_priority_error_required)
     val priorityInvalidError = stringResource(R.string.form_report_priority_error_invalid)
+    val latitudeInvalidError = stringResource(R.string.form_report_latitude_error_invalid)
+    val longitudeInvalidError = stringResource(R.string.form_report_longitude_error_invalid)
     val openingCameraMessage = stringResource(R.string.opening_camera)
     val photoCaptureSuccess = stringResource(R.string.photo_capture_success)
     val photoCaptureCancelled = stringResource(R.string.photo_capture_cancelled)
@@ -82,10 +84,15 @@ fun TrafficReportScreen(
     var type by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var priority by rememberSaveable { mutableStateOf("") }
+    var latitude by rememberSaveable { mutableStateOf("") }
+    var longitude by rememberSaveable { mutableStateOf("") }
+
     var titleError by rememberSaveable { mutableStateOf<String?>(null) }
     var typeError by rememberSaveable { mutableStateOf<String?>(null) }
     var descriptionError by rememberSaveable { mutableStateOf<String?>(null) }
     var priorityError by rememberSaveable { mutableStateOf<String?>(null) }
+    var latitudeError by rememberSaveable { mutableStateOf<String?>(null) }
+    var longitudeError by rememberSaveable { mutableStateOf<String?>(null) }
     var isTypeMenuExpanded by remember { mutableStateOf(false) }
 
     var isOpeningCamera by rememberSaveable { mutableStateOf(openCameraOnStart) }
@@ -99,6 +106,8 @@ fun TrafficReportScreen(
     val typeFocusRequester = remember { FocusRequester() }
     val descriptionFocusRequester = remember { FocusRequester() }
     val priorityFocusRequester = remember { FocusRequester() }
+    val latitudeFocusRequester = remember { FocusRequester() }
+    val longitudeFocusRequester = remember { FocusRequester() }
 
     val takePhotoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -287,6 +296,42 @@ fun TrafficReportScreen(
                 colors = trafficReportTextFieldColors(fieldBackground)
             )
 
+            Text(
+                text = stringResource(R.string.form_report_latitude),
+                modifier = Modifier.padding(bottom = labelSpacing)
+            )
+            OutlinedTextField(
+                value = latitude,
+                onValueChange = { latitude = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = fieldSpacing)
+                    .focusRequester(latitudeFocusRequester),
+                placeholder = { Text(stringResource(R.string.form_report_latitude_hint)) },
+                singleLine = true,
+                isError = latitudeError != null,
+                supportingText = latitudeError?.let { { Text(it) } },
+                colors = trafficReportTextFieldColors(fieldBackground)
+            )
+
+            Text(
+                text = stringResource(R.string.form_report_longitude),
+                modifier = Modifier.padding(bottom = labelSpacing)
+            )
+            OutlinedTextField(
+                value = longitude,
+                onValueChange = { longitude = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = fieldSpacing)
+                    .focusRequester(longitudeFocusRequester),
+                placeholder = { Text(stringResource(R.string.form_report_longitude_hint)) },
+                singleLine = true,
+                isError = longitudeError != null,
+                supportingText = longitudeError?.let { { Text(it) } },
+                colors = trafficReportTextFieldColors(fieldBackground)
+            )
+
             Button(
                 onClick = {
                     titleError = null
@@ -298,6 +343,8 @@ fun TrafficReportScreen(
                     val trimmedType = type.trim()
                     val trimmedDescription = description.trim()
                     val trimmedPriority = priority.trim()
+                    val trimmedLatitude = latitude.trim().toDoubleOrNull()
+                    val trimmedLongitude = longitude.trim().toDoubleOrNull()
 
                     when {
                         trimmedTitle.isEmpty() -> {
@@ -325,6 +372,16 @@ fun TrafficReportScreen(
                             priorityFocusRequester.requestFocus()
                         }
 
+                        trimmedLatitude == null -> {
+                            latitudeError = latitudeInvalidError
+                            latitudeFocusRequester.requestFocus()
+                        }
+
+                        trimmedLongitude == null -> {
+                            longitudeError = longitudeInvalidError
+                            longitudeFocusRequester.requestFocus()
+                        }
+
                         else -> {
                             val photoUri = capturedPhotoUri?.let(Uri::parse)
 
@@ -334,6 +391,8 @@ fun TrafficReportScreen(
                                 trimmedType,
                                 trimmedDescription,
                                 trimmedPriority,
+                                trimmedLatitude,
+                                trimmedLongitude,
                                 photoUri
                             )
                             isSubmitting = false
