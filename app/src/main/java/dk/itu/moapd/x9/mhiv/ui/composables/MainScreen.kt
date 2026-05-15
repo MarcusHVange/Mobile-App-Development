@@ -31,15 +31,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import dk.itu.moapd.x9.mhiv.R
-import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 
 @Composable
 fun MainScreen(
-    reports: List<TrafficReportModel>,
+    reports: List<TrafficReport>,
     userId: String?,
     isLoggedIn: Boolean,
     onAddReportNavigate: () -> Unit,
-    onReportClick: (TrafficReportModel) -> Unit,
+    onReportClick: (TrafficReport) -> Unit,
     onDelete: (String, () -> Unit) -> Unit,
     authAction: (Boolean) -> Unit
 ) {

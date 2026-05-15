@@ -19,11 +19,11 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
-import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 
 @Composable
 fun MapsScreen(
-    reports: List<TrafficReportModel>,
+    reports: List<TrafficReport>,
     location: Location?
 ) {
     val userLatLng = if (location != null) LatLng(location.latitude, location.longitude) else LatLng(55.6596357, 12.5885189)

@@ -1,6 +1,6 @@
 package dk.itu.moapd.x9.mhiv.domain.model
 
-data class TrafficReportModel(
+data class TrafficReport(
     var id: String = "",
     var userId: String = "",
     var reportTitle: String = "",

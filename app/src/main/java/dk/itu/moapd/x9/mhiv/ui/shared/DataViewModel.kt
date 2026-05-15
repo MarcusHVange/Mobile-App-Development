@@ -16,7 +16,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import dk.itu.moapd.x9.mhiv.R
-import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 import dk.itu.moapd.x9.mhiv.ui.repositories.TrafficReportRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 
 data class MainUIState(
     val userId: String? = null,
-    val reports: List<TrafficReportModel> = emptyList()
+    val reports: List<TrafficReport> = emptyList()
 )
 
 class DataViewModel(
@@ -55,7 +55,7 @@ class DataViewModel(
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val items = snapshot.children.mapNotNull { child ->
-                    val report = child.getValue(TrafficReportModel::class.java) ?: return@mapNotNull null
+                    val report = child.getValue(TrafficReport::class.java) ?: return@mapNotNull null
                     val id = child.key ?: return@mapNotNull null
 
                     report.copy(id = id)
@@ -122,7 +122,7 @@ class DataViewModel(
         }
     }
 
-    fun updateTrafficReport(report: TrafficReportModel) {
+    fun updateTrafficReport(report: TrafficReport) {
         viewModelScope.launch(Dispatchers.IO) {
             trafficReportRepository.updateTrafficReport(
                 reportId = report.id,

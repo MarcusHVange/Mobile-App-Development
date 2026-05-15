@@ -10,7 +10,7 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.database
 import com.google.firebase.storage.storage
 import dk.itu.moapd.x9.mhiv.BuildConfig
-import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
@@ -52,7 +52,7 @@ class TrafficReportRepository(
 
         val photoPath = if (photoUri != null) uploadTrafficReportPhoto(photoUri, key) else ""
 
-        val report = TrafficReportModel(
+        val report = TrafficReport(
             id = key,
             userId = userId,
             reportTitle = reportTitle,
@@ -85,7 +85,7 @@ class TrafficReportRepository(
         createdAt: Long,
         now: Long = System.currentTimeMillis()
     ): DatabaseError? {
-        val report = TrafficReportModel(
+        val report = TrafficReport(
             id = reportId,
             userId = userId,
             reportTitle = reportTitle,

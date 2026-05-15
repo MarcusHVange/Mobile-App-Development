@@ -39,12 +39,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dk.itu.moapd.x9.mhiv.R
-import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 import kotlinx.coroutines.delay
 
 @Composable
 fun TrafficReportDetails(
-    report: TrafficReportModel,
+    report: TrafficReport,
     onBack: () -> Unit,
     loadPhotoUrl: suspend (String) -> Uri?
 ) {

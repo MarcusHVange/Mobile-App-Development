@@ -26,11 +26,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import dk.itu.moapd.x9.mhiv.R
-import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
+import dk.itu.moapd.x9.mhiv.domain.model.TrafficReport
 
 @Composable
 fun TrafficReportItem(
-    reportData: TrafficReportModel,
+    reportData: TrafficReport,
     onDelete: () -> Unit,
     onClick: () -> Unit,
     isLoggedIn: Boolean,
