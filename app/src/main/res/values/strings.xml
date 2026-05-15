@@ -46,7 +46,8 @@
     <string name="delete_report">Delete report</string>
     <string name="content_description_report_image">Traffic report photo</string>
     <string name="report_photo_caption">The image contains: %1$s</string>
-    <string name="report_image_not_available">Image is not yet available.</string>
+    <string name="report_image_loading">Image loading</string>
+    <string name="report_image_not_available">No image available</string>
     <string name="report_type_label">Type</string>
     <string name="report_description_label">Description</string>
     <string name="report_field_label">%1$s:</string>
@@ -67,4 +68,6 @@
     <string name="database_error_permission_denied">Permission denied.</string>
     <string name="database_error_network">Network problem. Please try again.</string>
     <string name="database_error_generic">Something went wrong. Please try again.</string>
+    <string name="traffic_report_upload_error">Something went wrong. Could not upload report</string>
+    <string name="traffic_report_delete_error">Something went wrong. Could not delete report</string>
 </resources>

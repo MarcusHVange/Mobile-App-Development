@@ -11,6 +11,7 @@ import com.google.firebase.database.database
 import com.google.firebase.storage.storage
 import dk.itu.moapd.x9.mhiv.domain.model.TrafficReportModel
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 
 const val DATABASEURL = "https://moapd-2026-fce63-default-rtdb.europe-west1.firebasedatabase.app/"
@@ -49,7 +50,8 @@ class TrafficReportRepository(
             .child(PATH_TRAFFIC_REPORTS)
             .push()
             .key ?: return null
-        val photoPath = photoUri?.let { "$PATH_TRAFFIC_REPORT_PHOTOS/$key.jpg" }.orEmpty()
+
+        val photoPath = if (photoUri != null) uploadTrafficReportPhoto(photoUri, key) else ""
 
         val report = TrafficReportModel(
             id = key,
@@ -66,16 +68,7 @@ class TrafficReportRepository(
             updatedAt = now
         )
 
-        val error = root
-            .child(PATH_TRAFFIC_REPORTS)
-            .child(key)
-            .awaitSetValue(report)
-
-        if (error == null) {
-            photoUri?.let { uploadTrafficReportPhoto(it, key) }
-        }
-
-        return error
+        return root.child(PATH_TRAFFIC_REPORTS).child(key).awaitSetValue(report)
     }
 
     @WorkerThread
@@ -146,10 +139,17 @@ class TrafficReportRepository(
             }
         }
 
-    private fun uploadTrafficReportPhoto(photoUri: Uri, reportId: String) {
-        Firebase.storage(STORAGEBUCKETURL).reference
-            .child("$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg")
-            .putFile(photoUri)
+    private suspend fun uploadTrafficReportPhoto(photoUri: Uri, reportId: String): String {
+        val photoPath = photoUri.let { uri ->
+            val path = "$PATH_TRAFFIC_REPORT_PHOTOS/$reportId.jpg"
+            Firebase.storage(STORAGEBUCKETURL).reference
+                .child(path)
+                .putFile(uri)
+                .await()
+            path
+        }
+
+        return photoPath
     }
 
     suspend fun getTrafficReportPhotoUrl(path: String): Uri? =

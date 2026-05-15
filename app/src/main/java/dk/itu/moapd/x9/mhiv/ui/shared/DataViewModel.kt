@@ -38,9 +38,6 @@ class DataViewModel(
 
     val uiState: StateFlow<MainUIState> = _uiState
 
-    private val _databaseErrorMessage = MutableLiveData<Int?>()
-    val databaseErrorMessage: LiveData<Int?> = _databaseErrorMessage
-
     private var reportsQuery: Query? = null
     private var listener: ValueEventListener? = null
 
@@ -67,9 +64,7 @@ class DataViewModel(
                 _uiState.update { it.copy(reports = items) }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                _databaseErrorMessage.value = databaseErrorMessageRes(error)
-            }
+            override fun onCancelled(error: DatabaseError) {}
         }
 
         // Update the listener and add it to the query.
@@ -97,30 +92,33 @@ class DataViewModel(
         longitude: Double?,
         photoUri: Uri?,
         onComplete: () -> Unit = {},
+        onError: () -> Unit = {}
     ) {
         viewModelScope.launch {
             val photoCaption = photoUri
                 ?.let { createPhotoCaption(context.applicationContext, it) }
                 .orEmpty()
 
-            val error = withContext(Dispatchers.IO) {
-                trafficReportRepository.insertTrafficReport(
-                    reportTitle = reportTitle,
-                    reportType = reportType,
-                    reportDescription = reportDescription,
-                    reportPriority = reportPriority,
-                    latitude = latitude,
-                    longitude = longitude,
-                    photoUri = photoUri,
-                    photoCaption = photoCaption
-                )
+            val result = runCatching {
+                withContext(Dispatchers.IO) {
+                    trafficReportRepository.insertTrafficReport(
+                        reportTitle = reportTitle,
+                        reportType = reportType,
+                        reportDescription = reportDescription,
+                        reportPriority = reportPriority,
+                        latitude = latitude,
+                        longitude = longitude,
+                        photoUri = photoUri,
+                        photoCaption = photoCaption
+                    )
+                }
             }
 
-            if (error != null) {
-                _databaseErrorMessage.value = databaseErrorMessageRes(error)
+            result.onSuccess { error ->
+                if (error == null) onComplete() else onError()
+            }.onFailure {
+                onError()
             }
-
-            onComplete()
         }
     }
 
@@ -142,20 +140,16 @@ class DataViewModel(
         }
     }
 
-    fun deleteTrafficReport(reportId: String) {
+    fun deleteTrafficReport(reportId: String, onError: () -> Unit) {
         viewModelScope.launch {
             val error = withContext(Dispatchers.IO) {
                 trafficReportRepository.deleteTrafficReport(reportId)
             }
 
             if (error != null) {
-                _databaseErrorMessage.value = databaseErrorMessageRes(error)
+                onError()
             }
         }
-    }
-
-    fun clearDatabaseErrorMessage() {
-        _databaseErrorMessage.value = null
     }
 
     suspend fun getTrafficReportPhotoUrl(photoPath: String): Uri? =
@@ -175,17 +169,6 @@ class DataViewModel(
                     .joinToString(", ") { it.text }
             }.getOrDefault("")
         }
-
-    @StringRes
-    private fun databaseErrorMessageRes(error: DatabaseError?): Int {
-        return when (error?.code) {
-            DatabaseError.PERMISSION_DENIED -> R.string.database_error_permission_denied
-            DatabaseError.DISCONNECTED,
-            DatabaseError.NETWORK_ERROR,
-            DatabaseError.UNAVAILABLE -> R.string.database_error_network
-            else -> R.string.database_error_generic
-        }
-    }
 }
 
 private const val PHOTO_CAPTION_LABEL_COUNT = 3

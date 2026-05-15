@@ -49,7 +49,6 @@ fun NavigationStack(
 
     val uiState by dataViewModel.uiState.collectAsStateWithLifecycle()
     val isLoggedIn by sessionViewModel.isLoggedIn.observeAsState(false)
-    val databaseErrorMessage by dataViewModel.databaseErrorMessage.observeAsState()
 
     val screensWithBottomNav = listOf(Screen.Main.route, Screen.Maps.route)
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -108,17 +107,6 @@ fun NavigationStack(
                     }
                 }
 
-                LaunchedEffect(databaseErrorMessage) {
-                    val messageRes = databaseErrorMessage ?: return@LaunchedEffect
-
-                    Toast.makeText(
-                        context,
-                        context.getString(messageRes),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    dataViewModel.clearDatabaseErrorMessage()
-                }
-
                 MainScreen(
                     reports = uiState.reports,
                     userId = uiState.userId,
@@ -167,7 +155,7 @@ fun NavigationStack(
                 TrafficReportScreen(
                     onBack = { navController.navigateUp() },
                     openCameraOnStart = true,
-                    onSubmit = { title, type, description, priority, latitude, longitude, photoUri ->
+                    onSubmit = { title, type, description, priority, latitude, longitude, photoUri, onError ->
                         dataViewModel.insertTrafficReport(
                             context = context.applicationContext,
                             reportTitle = title,
@@ -177,9 +165,12 @@ fun NavigationStack(
                             latitude = latitude ?: location?.latitude,
                             longitude = longitude ?: location?.longitude,
                             photoUri = photoUri,
+                            onComplete = {
+                                reportCreated = true
+                                navController.navigateUp()
+                            },
+                            onError = onError
                         )
-                        reportCreated = true
-                        navController.navigateUp()
                     }
                 )
             }

@@ -1,5 +1,6 @@
 package dk.itu.moapd.x9.mhiv.ui.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -38,7 +40,7 @@ fun MainScreen(
     isLoggedIn: Boolean,
     onAddReportNavigate: () -> Unit,
     onReportClick: (TrafficReportModel) -> Unit,
-    onDelete: (String) -> Unit,
+    onDelete: (String, () -> Unit) -> Unit,
     authAction: (Boolean) -> Unit
 ) {
     val screenBackground = colorResource(R.color.background_light)
@@ -50,6 +52,8 @@ fun MainScreen(
     val iconSpacing = dimensionResource(R.dimen.main_screen_icon_spacing)
     val maxContentWidth = dimensionResource(R.dimen.main_screen_content_width)
     val pillCornerRadius = dimensionResource(R.dimen.main_screen_pill_corner_radius)
+
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -121,7 +125,18 @@ fun MainScreen(
                     isLoggedIn = isLoggedIn,
                     isReportOwnedByUser = report.userId == userId,
                     onClick = { onReportClick(report) },
-                    onDelete = { onDelete(report.id) }
+                    onDelete = {
+                        onDelete(
+                            report.id,
+                            {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.traffic_report_delete_error),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        )
+                    }
                 )
             }
         }

@@ -143,24 +143,17 @@ private fun FirebaseStoragePicassoImage(
 ) {
     val context = LocalContext.current
     var url by remember(path) { mutableStateOf<String?>(null) }
-    var isImageUnavailable by remember(path) { mutableStateOf(false) }
-    var isImageLoaded by remember(path) { mutableStateOf(false) }
-    var retryCount by remember(path) { mutableStateOf(0) }
+    var isLoadingImage by remember(path) { mutableStateOf(true) }
+    var isImageAvailable by remember(path) { mutableStateOf(true) }
 
-    LaunchedEffect(path, retryCount) {
-        if (retryCount > 0) {
-            delay(IMAGE_DOWNLOAD_RETRY_DELAY_MS)
-        }
-
+    LaunchedEffect(path) {
         val downloadUrl = loadPhotoUrl(path)
+
         if (downloadUrl == null) {
-            isImageUnavailable = true
-            if (retryCount < IMAGE_DOWNLOAD_RETRIES) {
-                retryCount += 1
-            }
+            isLoadingImage = false
+            isImageAvailable = false
         } else {
             url = downloadUrl.toString()
-            isImageUnavailable = true
         }
     }
 
@@ -191,20 +184,29 @@ private fun FirebaseStoragePicassoImage(
                         .centerCrop()
                         .into(imageView, object : Callback {
                             override fun onSuccess() {
-                                isImageLoaded = true
-                                isImageUnavailable = false
+                                isLoadingImage = false
                             }
 
                             override fun onError(e: Exception?) {
-                                isImageLoaded = false
-                                isImageUnavailable = true
+                                isLoadingImage = false
+                                isImageAvailable = false
                             }
                         })
                 }
             }
         )
 
-        if (isImageUnavailable && !isImageLoaded) {
+        if (isLoadingImage) {
+            Text(
+                text = stringResource(R.string.report_image_loading),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        if (!isLoadingImage && !isImageAvailable) {
             Text(
                 text = stringResource(R.string.report_image_not_available),
                 modifier = Modifier
@@ -215,6 +217,3 @@ private fun FirebaseStoragePicassoImage(
         }
     }
 }
-
-private const val IMAGE_DOWNLOAD_RETRIES = 3
-private const val IMAGE_DOWNLOAD_RETRY_DELAY_MS = 10_000L

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -56,7 +57,7 @@ import java.io.File
 fun TrafficReportScreen(
     onBack: () -> Unit,
     openCameraOnStart: Boolean = false,
-    onSubmit: (String, String, String, String, Double?, Double?, Uri?) -> Unit
+    onSubmit: (String, String, String, String, Double?, Double?, Uri?, onError: () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
     val screenBackground = colorResource(R.color.background_light)
@@ -372,12 +373,12 @@ fun TrafficReportScreen(
                             priorityFocusRequester.requestFocus()
                         }
 
-                        trimmedLatitude == null -> {
+                        latitude.isNotEmpty() && trimmedLatitude == null -> {
                             latitudeError = latitudeInvalidError
                             latitudeFocusRequester.requestFocus()
                         }
 
-                        trimmedLongitude == null -> {
+                        longitude.isNotEmpty() && trimmedLongitude == null -> {
                             longitudeError = longitudeInvalidError
                             longitudeFocusRequester.requestFocus()
                         }
@@ -393,9 +394,16 @@ fun TrafficReportScreen(
                                 trimmedPriority,
                                 trimmedLatitude,
                                 trimmedLongitude,
-                                photoUri
+                                photoUri,
+                                {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.traffic_report_upload_error),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    isSubmitting = false
+                                }
                             )
-                            isSubmitting = false
                         }
                     }
                 },
